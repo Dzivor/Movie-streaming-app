@@ -1,4 +1,5 @@
 import Navbar from "../../components/layout/Navbar";
+import Footer from "../../components/layout/Footer";
 import MovieHeroSection from "../../components/hero/MovieHeroSection";
 import MovieSection from "../../components/movies/MovieSection";
 import {
@@ -76,6 +77,8 @@ const MoviePage = () => {
       {validatedComedyMovies.length > 0 && (
         <MovieSection title="Comedy Favorites" movies={validatedComedyMovies} />
       )}
+
+      <Footer />
     </div>
   );
 };

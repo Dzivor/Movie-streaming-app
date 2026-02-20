@@ -1,3 +1,4 @@
+import { useNavigate } from "react-router-dom";
 import type { Movie } from "../../types/movie.types";
 
 interface MovieCardProps {
@@ -5,8 +6,17 @@ interface MovieCardProps {
 }
 
 const MovieCard: React.FC<MovieCardProps> = ({ movie }) => {
+  const navigate = useNavigate();
+
+  const handleClick = () => {
+    navigate(`/movie/${movie.id}`);
+  };
+
   return (
-    <div className="bg-gray-600 rounded-xl overflow-hidden  border border-gray-600 hover:scale-105 transition-transform duration-300">
+    <div
+      onClick={handleClick}
+      className="bg-gray-600 rounded-xl overflow-hidden border border-gray-600 hover:scale-105 transition-transform duration-300 cursor-pointer"
+    >
       <img
         src={movie.thumbnail}
         alt={movie.title}

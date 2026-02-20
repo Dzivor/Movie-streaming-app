@@ -1,4 +1,5 @@
 import Navbar from "../../components/layout/Navbar";
+import Footer from "../../components/layout/Footer";
 import HeroSection from "../../components/hero/HeroSection";
 import MovieSection from "../../components/movies/MovieSection";
 import { trendingMovies } from "../../Data/movie";
@@ -18,6 +19,7 @@ const HomePage = () => {
       <HeroSection />
       <MovieSection title="Trending Now" movies={movies} />
       <MovieSection title="New Release" movies={movies} />
+      <Footer />
     </main>
   );
 };

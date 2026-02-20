@@ -1,19 +1,7 @@
 import { useState } from "react";
 import { Eye, EyeClosed } from "lucide-react";
 import { ErrorMessage, Field, Form, Formik } from "formik";
-import * as Yup from "yup";
-
-const loginSchema = Yup.object({
-  email: Yup.string()
-    .email("Enter a valid email address")
-    .required("Email is required"),
-  password: Yup.string()
-    .required("Password is required")
-    .min(8, "Minimum 8 characters")
-    .matches(/[A-Z]/, "Add at least 1 uppercase letter")
-    .matches(/[0-9]/, "Add at least 1 number")
-    .matches(/[^A-Za-z0-9]/, "Add at least 1 special character"),
-});
+import { signInSchema } from "../../validation/signInValidation";
 
 export function Login() {
   const [showPassword, setShowPassword] = useState(false);
@@ -24,7 +12,7 @@ export function Login() {
 
       <Formik
         initialValues={{ email: "", password: "" }}
-        validationSchema={loginSchema}
+        validationSchema={signInSchema}
         onSubmit={(values) => {
           console.log("Login attempt:", values);
         }}

@@ -22,3 +22,6 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+MOVIE_PAGE_DOCUMENTATION.md
+backendWorkflow.md
+frontendWorkflow.md
