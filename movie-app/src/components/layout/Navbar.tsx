@@ -7,7 +7,7 @@ const Navbar = () => {
   const [isSignInOpen, setIsSignInOpen] = useState(false);
 
   return (
-    <nav className="">
+    <nav className="bg-black  text-white min-h-screen">
       <div className="max-w-7xl mx-auto px-4 md:px-8 py-4">
         <div className="grid grid-cols-3 items-center gap-4">
           {/* Logo - Left */}

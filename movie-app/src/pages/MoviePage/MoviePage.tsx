@@ -1,4 +1,3 @@
-import Navbar from "../../components/layout/Navbar";
 import Footer from "../../components/layout/Footer";
 import MovieHeroSection from "../../components/hero/MovieHeroSection";
 import MovieSection from "../../components/movies/MovieSection";
@@ -42,7 +41,6 @@ const MoviePage = () => {
 
   return (
     <div className="bg-black text-white min-h-screen">
-      <Navbar />
       <MovieHeroSection />
 
       {/*Trending Movies*/}
