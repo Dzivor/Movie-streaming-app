@@ -62,11 +62,54 @@ Compare Password.
 
 ↓
 
-JWT Access Token.
+Generate JWT Access Token (15 min expiry).
 
 ↓
 
-Return user profile.
+Generate JWT Refresh Token (7 days expiry).
+
+↓
+
+Store Refresh Token:
+
+refresh_tokens table:
+
+user_id
+token
+expires_at.
+
+↓
+
+Return:
+
+Access Token (Bearer).
+Refresh Token (HttpOnly Cookie or Secure Storage).
+User Profile.
+
+---
+
+Token Refresh:
+
+POST /auth/refresh
+
+↓
+
+Validate Refresh Token.
+
+↓
+
+Check:
+
+refresh_tokens.user_id.
+refresh_tokens.expires_at > NOW().
+
+↓
+
+Generate New Access Token (15 min expiry).
+
+↓
+
+Return New Access Token.
 
 ---
 
