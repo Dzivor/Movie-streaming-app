@@ -4,7 +4,7 @@ Stack:
 
 - Node Typescript
 - Express
-- Prisma ORM
+- Type ORM
 - PostgreSQL
 - BullMQ
 - Redis

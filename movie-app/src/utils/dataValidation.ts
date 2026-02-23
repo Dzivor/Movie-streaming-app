@@ -1,7 +1,7 @@
 import type { Movie } from "../types/movie.types";
 
-/**
- * Type guard to check if a value is a valid Movie object
+/*
+  Guards
  */
 export const isValidMovie = (movie: unknown): movie is Movie => {
   if (!movie || typeof movie !== "object") {
@@ -25,9 +25,9 @@ export const isValidMovie = (movie: unknown): movie is Movie => {
   );
 };
 
-/**
- * Validating  array of movies and filtering invalid entries
- */
+
+ 
+ 
 export const validateMovieArray = (data: unknown): Movie[] => {
   if (!Array.isArray(data)) {
     console.warn("Expected an array of movies, received:", typeof data);
