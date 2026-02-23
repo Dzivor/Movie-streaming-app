@@ -21,7 +21,7 @@ A full-stack movie streaming application built with modern technologies. The pla
 - **Node.js** - Runtime
 - **TypeScript** - Type safety
 - **Express** - Web framework
-- **Prisma ORM** - Database ORM
+- **Type ORM** - Database ORM
 - **PostgreSQL** - Database
 - **BullMQ** - Job queue
 - **Redis** - Cache & message broker
