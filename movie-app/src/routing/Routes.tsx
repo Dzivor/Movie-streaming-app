@@ -5,35 +5,12 @@ import SignUpPage from "../pages/Sign-up/SignUpPage";
 import NotFound from "../pages/NotFoundPage/NotFound";
 import MovieDetailPage from "../pages/MovieDetailPage/MovieDetailPage";
 import { ErrorBoundary, RouteErrorFallback } from "../components/ErrorBoundary";
+import MainLayout from "../layout/MainLayout";
 
 const AppRoutes = () => {
   return (
     <div>
       <Routes>
-        <Route
-          path="/"
-          element={
-            <ErrorBoundary fallback={<RouteErrorFallback />}>
-              <HomePage />
-            </ErrorBoundary>
-          }
-        />
-        <Route
-          path="/Movies"
-          element={
-            <ErrorBoundary fallback={<RouteErrorFallback />}>
-              <MoviePage />
-            </ErrorBoundary>
-          }
-        />
-        <Route
-          path="/movie/:id"
-          element={
-            <ErrorBoundary fallback={<RouteErrorFallback />}>
-              <MovieDetailPage />
-            </ErrorBoundary>
-          }
-        />
         <Route
           path="/Sign Up"
           element={
@@ -42,6 +19,34 @@ const AppRoutes = () => {
             </ErrorBoundary>
           }
         />
+        <Route path="/" element={<MainLayout />}>
+          <Route
+            path=""
+            element={
+              <ErrorBoundary fallback={<RouteErrorFallback />}>
+                <HomePage />
+              </ErrorBoundary>
+            }
+          />
+
+          <Route
+            path="/Movies"
+            element={
+              <ErrorBoundary fallback={<RouteErrorFallback />}>
+                <MoviePage />
+              </ErrorBoundary>
+            }
+          />
+
+          <Route
+            path="/movie/:id"
+            element={
+              <ErrorBoundary fallback={<RouteErrorFallback />}>
+                <MovieDetailPage />
+              </ErrorBoundary>
+            }
+          />
+        </Route>
         <Route path="*" element={<NotFound />} />
       </Routes>
     </div>

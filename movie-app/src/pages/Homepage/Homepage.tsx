@@ -1,4 +1,3 @@
-import Navbar from "../../components/layout/Navbar";
 import Footer from "../../components/layout/Footer";
 import HeroSection from "../../components/hero/HeroSection";
 import MovieSection from "../../components/movies/MovieSection";
@@ -16,7 +15,6 @@ const HomePage = () => {
   console.log(movies);
   return (
     <main className="bg-black text-white min-h-screen">
-      <Navbar />
       <HeroSection />
       <MovieSection title="Trending Now" movies={movies} />
       <MovieSection title="New Release" movies={movies} />
