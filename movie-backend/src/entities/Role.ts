@@ -2,18 +2,29 @@ import {
   Entity,
   PrimaryGeneratedColumn,
   Column,
+  OneToMany,
   CreateDateColumn,
   UpdateDateColumn,
 } from "typeorm";
+import { User } from "./User";
 
 @Entity("roles")
 export class Role {
   @PrimaryGeneratedColumn("uuid")
-  role_id!: string;
+  id!: string;
 
-  @Column({ type: "text" })
+  @Column({ type: "text", unique: true })
+  name!: string;
+
+  @Column({ type: "text", nullable: false })
   description!: string;
 
-  @CreateDateColumn() created_at!: Date;
-  @UpdateDateColumn() updated_at!: Date;
+  @OneToMany(() => User, (user) => user.role)
+  users!: User[];
+
+  @CreateDateColumn({ type: "timestamp" })
+  created_at!: Date;
+
+  @UpdateDateColumn({ type: "timestamp" })
+  updated_at!: Date;
 }
