@@ -4,7 +4,8 @@ import MovieSection from "../../components/movies/MovieSection";
 import { trendingMovies } from "../../Data/movie";
 
 const HomePage = () => {
-  const movie = (data) => {
+  const movie = (data: unknown) => {
+    data = data as unknown[];
     if (!data || !Array.isArray(data) || data.length === 0) {
       return [];
     }
