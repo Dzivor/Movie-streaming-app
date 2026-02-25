@@ -2,25 +2,19 @@ import { Request, Response } from "express";
 import {
   loginUser,
   registerUser,
+  refreshAccessToken,
   toAuthError,
   toPublicUser,
 } from "./auth.service";
 
 export const register = async (req: Request, res: Response) => {
-  const { email, first_name, last_name, password } = req.body ?? {};
-
-  if (!email || !first_name || !last_name || !password) {
-    return res.status(400).json({
-      message: "email, first_name, last_name, and password are required",
-    });
-  }
-
   try {
-    const user = await registerUser({ email, first_name, last_name, password });
+    const { user, tokens } = await registerUser(req.body);
 
     return res.status(201).json({
       message: "Registration successful",
       user: toPublicUser(user),
+      tokens,
     });
   } catch (error) {
     const authError = toAuthError(error);
@@ -32,20 +26,31 @@ export const register = async (req: Request, res: Response) => {
 };
 
 export const login = async (req: Request, res: Response) => {
-  const { email, password } = req.body ?? {};
-
-  if (!email || !password) {
-    return res.status(400).json({
-      message: "email and password are required",
-    });
-  }
-
   try {
-    const user = await loginUser({ email, password });
+    const { user, tokens } = await loginUser(req.body);
 
     return res.status(200).json({
       message: "Login successful",
       user: toPublicUser(user),
+      tokens,
+    });
+  } catch (error) {
+    const authError = toAuthError(error);
+
+    return res.status(authError.statusCode).json({
+      message: authError.message,
+    });
+  }
+};
+
+export const refresh = async (req: Request, res: Response) => {
+  try {
+    const { refreshToken } = req.body;
+    const tokens = await refreshAccessToken(refreshToken);
+
+    return res.status(200).json({
+      message: "Token refreshed successfully",
+      tokens,
     });
   } catch (error) {
     const authError = toAuthError(error);

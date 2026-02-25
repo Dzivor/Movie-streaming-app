@@ -41,7 +41,7 @@ export class User {
   watch_sessions!: WatchSession[];
 
   @OneToMany(() => AdminLog, (log) => log.admin)
-  admin_logs!: AdminLog[];
+  admin_logs!: AdminLog[];//remove later
 
   @OneToMany(() => Movie, (movie) => movie.uploaded_by)
   uploaded_movies!: Movie[];

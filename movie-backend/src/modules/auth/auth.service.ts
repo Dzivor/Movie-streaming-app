@@ -1,7 +1,9 @@
 import crypto from "crypto";
+import jwt from "jsonwebtoken";
 import { AppDataSource } from "../../config/database";
 import { Role } from "../../entities/Role";
 import { User } from "../../entities/User";
+import { jwtConfig } from "../../config/jwt.config";
 
 export type RegisterInput = {
   email: string;
@@ -13,6 +15,17 @@ export type RegisterInput = {
 export type LoginInput = {
   email: string;
   password: string;
+};
+
+export type TokenPayload = {
+  userId: string;
+  email: string;
+  role: string;
+};
+
+export type AuthTokens = {
+  accessToken: string;
+  refreshToken: string;
 };
 
 class AuthError extends Error {
@@ -52,6 +65,49 @@ const verifyPassword = (password: string, stored: string): boolean => {
   );
 };
 
+const generateAccessToken = (payload: TokenPayload): string => {
+  const token = jwt.sign(payload, jwtConfig.accessTokenSecret, {
+    expiresIn: jwtConfig.accessTokenExpiry,
+  } as any);
+  return token;
+};
+
+const generateRefreshToken = (payload: TokenPayload): string => {
+  const token = jwt.sign(payload, jwtConfig.refreshTokenSecret, {
+    expiresIn: jwtConfig.refreshTokenExpiry,
+  } as any);
+  return token;
+};
+
+const generateTokens = (user: User): AuthTokens => {
+  const payload: TokenPayload = {
+    userId: user.id,
+    email: user.email,
+    role: user.role?.name ?? "user",
+  };
+
+  return {
+    accessToken: generateAccessToken(payload),
+    refreshToken: generateRefreshToken(payload),
+  };
+};
+
+export const verifyAccessToken = (token: string): TokenPayload => {
+  try {
+    return jwt.verify(token, jwtConfig.accessTokenSecret) as TokenPayload;
+  } catch (error) {
+    throw new AuthError("Invalid or expired access token", 401);
+  }
+};
+
+export const verifyRefreshToken = (token: string): TokenPayload => {
+  try {
+    return jwt.verify(token, jwtConfig.refreshTokenSecret) as TokenPayload;
+  } catch (error) {
+    throw new AuthError("Invalid or expired refresh token", 401);
+  }
+};
+
 const ensureDefaultRole = async (): Promise<Role> => {
   const roleRepository = AppDataSource.getRepository(Role);
   const existingRole = await roleRepository.findOne({
@@ -70,7 +126,9 @@ const ensureDefaultRole = async (): Promise<Role> => {
   return roleRepository.save(role);
 };
 
-export const registerUser = async (payload: RegisterInput): Promise<User> => {
+export const registerUser = async (
+  payload: RegisterInput,
+): Promise<{ user: User; tokens: AuthTokens }> => {
   const userRepository = AppDataSource.getRepository(User);
 
   const existingUser = await userRepository.findOne({
@@ -92,10 +150,15 @@ export const registerUser = async (payload: RegisterInput): Promise<User> => {
     role,
   });
 
-  return userRepository.save(user);
+  const savedUser = await userRepository.save(user);
+  const tokens = generateTokens(savedUser);
+
+  return { user: savedUser, tokens };
 };
 
-export const loginUser = async (payload: LoginInput): Promise<User> => {
+export const loginUser = async (
+  payload: LoginInput,
+): Promise<{ user: User; tokens: AuthTokens }> => {
   const userRepository = AppDataSource.getRepository(User);
   const user = await userRepository.findOne({
     where: { email: payload.email },
@@ -106,7 +169,9 @@ export const loginUser = async (payload: LoginInput): Promise<User> => {
     throw new AuthError("Invalid email or password", 401);
   }
 
-  return user;
+  const tokens = generateTokens(user);
+
+  return { user, tokens };
 };
 
 export const toPublicUser = (user: User) => ({
@@ -126,4 +191,22 @@ export const toAuthError = (error: unknown) => {
   }
 
   return new AuthError("Unexpected error", 500);
+};
+
+export const refreshAccessToken = async (
+  refreshToken: string,
+): Promise<AuthTokens> => {
+  const payload = verifyRefreshToken(refreshToken);
+
+  const userRepository = AppDataSource.getRepository(User);
+  const user = await userRepository.findOne({
+    where: { id: payload.userId },
+    relations: ["role"],
+  });
+
+  if (!user || !user.is_active) {
+    throw new AuthError("User not found or inactive", 401);
+  }
+
+  return generateTokens(user);
 };
