@@ -18,7 +18,7 @@ export class User {
   @PrimaryGeneratedColumn("uuid")
   id!: string;
 
-  @Column({ unique: true })
+  @Column({ unique: true, nullable: false })
   email!: string;
 
   @Column()
@@ -27,7 +27,7 @@ export class User {
   @Column()
   last_name!: string;
 
-  @Column()
+  @Column({ nullable: false })
   password_hash!: string;
 
   @ManyToOne(() => Role)

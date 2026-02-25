@@ -10,7 +10,7 @@ Columns:
 
 - id (uuid, primary key)
 - name (text, unique)
-- description (text, required)
+- description (text, nullable)
 - created_at (timestamp, auto)
 - updated_at (timestamp, auto)
 
@@ -25,10 +25,10 @@ Table: users
 Columns:
 
 - id (uuid, primary key)
-- email (text, unique)
+- email (text, unique, required)
 - first_name (text)
 - last_name (text)
-- password_hash (text)
+- password_hash (text, required)
 - is_active (boolean, default true)
 - created_at (timestamp, auto)
 - updated_at (timestamp, auto)
