@@ -1,10 +1,34 @@
 import { useState } from "react";
 import { Eye, EyeClosed } from "lucide-react";
 import { ErrorMessage, Field, Form, Formik } from "formik";
+import { useNavigate } from "react-router-dom";
 import { signUpSchema } from "../../validation/signUpValidation";
+import { useAuth } from "../../hooks/useAuth";
 
 const SignUpPage = () => {
   const [showPassword, setShowPassword] = useState(false);
+  const { register, isLoading, error } = useAuth();
+  const navigate = useNavigate();
+
+  const handleSubmit = async (values: {
+    firstName: string;
+    lastName: string;
+    email: string;
+    password: string;
+    confirmPassword: string;
+  }) => {
+    try {
+      await register(
+        values.firstName,
+        values.lastName,
+        values.email,
+        values.password,
+      );
+      navigate("/");
+    } catch {
+      // Error is handled by context
+    }
+  };
 
   return (
     <main className="min-h-screen bg-black text-white flex items-center justify-center px-6 py-16">
@@ -13,6 +37,12 @@ const SignUpPage = () => {
         <p className="mt-2 text-gray-400">
           Join StreamVibe and start your movie journey.
         </p>
+
+        {error && (
+          <div className="mt-4 p-3 bg-red-900/20 border border-red-500 text-red-400 rounded">
+            {error}
+          </div>
+        )}
 
         <Formik
           initialValues={{
@@ -23,9 +53,7 @@ const SignUpPage = () => {
             confirmPassword: "",
           }}
           validationSchema={signUpSchema}
-          onSubmit={(values) => {
-            console.log("Sign up details:", values);
-          }}
+          onSubmit={handleSubmit}
         >
           <Form className="mt-8 space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -160,9 +188,10 @@ const SignUpPage = () => {
 
             <button
               type="submit"
-              className="w-full bg-red-600 hover:bg-red-700 text-white font-semibold py-2.5 rounded-lg transition-colors"
+              disabled={isLoading}
+              className="w-full bg-red-600 hover:bg-red-700 disabled:bg-gray-600 text-white font-semibold py-2.5 rounded-lg transition-colors disabled:cursor-not-allowed"
             >
-              Create Account
+              {isLoading ? "Creating Account..." : "Create Account"}
             </button>
           </Form>
         </Formik>

@@ -60,3 +60,28 @@ export const refresh = async (req: Request, res: Response) => {
     });
   }
 };
+
+export const getCurrentUser = async (req: Request, res: Response) => {
+  try {
+    if (!req.user) {
+      return res.status(401).json({
+        message: "Unauthorized",
+      });
+    }
+
+    return res.status(200).json({
+      user: {
+        id: req.user.id,
+        email: req.user.email,
+        firstName: req.user.firstName,
+        lastName: req.user.lastName,
+      },
+    });
+  } catch (error) {
+    const authError = toAuthError(error);
+
+    return res.status(authError.statusCode).json({
+      message: authError.message,
+    });
+  }
+};

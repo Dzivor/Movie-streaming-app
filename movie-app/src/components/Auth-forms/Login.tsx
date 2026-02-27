@@ -1,21 +1,38 @@
 import { useState } from "react";
 import { Eye, EyeClosed } from "lucide-react";
 import { ErrorMessage, Field, Form, Formik } from "formik";
+import { useNavigate } from "react-router-dom";
 import { signInSchema } from "../../validation/signInValidation";
+import { useAuth } from "../../hooks/useAuth";
 
 export function Login() {
   const [showPassword, setShowPassword] = useState(false);
+  const { login, isLoading, error } = useAuth();
+  const navigate = useNavigate();
+
+  const handleSubmit = async (values: { email: string; password: string }) => {
+    try {
+      await login(values.email, values.password);
+      navigate("/");
+    } catch {
+      // Error is handled by context
+    }
+  };
 
   return (
     <div>
       <h2 className="text-2xl font-bold text-gray-800 mb-6">Sign In</h2>
 
+      {error && (
+        <div className="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded">
+          {error}
+        </div>
+      )}
+
       <Formik
         initialValues={{ email: "", password: "" }}
         validationSchema={signInSchema}
-        onSubmit={(values) => {
-          console.log("Login attempt:", values);
-        }}
+        onSubmit={handleSubmit}
       >
         <Form className="space-y-4">
           <div>
@@ -72,9 +89,10 @@ export function Login() {
 
           <button
             type="submit"
-            className="w-full bg-red-600 hover:bg-red-700 text-white font-semibold py-2.5 rounded-lg transition-colors"
+            disabled={isLoading}
+            className="w-full bg-red-600 hover:bg-red-700 disabled:bg-gray-400 text-white font-semibold py-2.5 rounded-lg transition-colors disabled:cursor-not-allowed"
           >
-            Login
+            {isLoading ? "Logging in..." : "Login"}
           </button>
         </Form>
       </Formik>
