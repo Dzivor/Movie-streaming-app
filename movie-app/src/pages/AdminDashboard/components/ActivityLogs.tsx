@@ -207,6 +207,7 @@ const ActivityLogs: React.FC = () => {
               <span className="font-medium">5</span> of{" "}
               <span className="font-medium">48</span> results
             </div>
+            
             <div className="flex gap-2">
               <button className="px-4 py-2 bg-gray-800 border border-gray-700 text-white rounded-lg hover:bg-gray-800 transition-colors">
                 Previous

@@ -104,6 +104,8 @@ const UploadMovie: React.FC = () => {
                 <option value="drama">Drama</option>
                 <option value="comedy">Comedy</option>
                 <option value="horror">Horror</option>
+                <option value="romance">Romance</option>
+                <option value="thriller">Thriller</option>
               </select>
             </div>
 

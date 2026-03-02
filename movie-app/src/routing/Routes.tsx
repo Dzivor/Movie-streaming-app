@@ -22,7 +22,7 @@ const AppRoutes = () => {
           }
         />
         <Route
-          path="/admin"
+          path="/admin/*"
           element={
             <ErrorBoundary fallback={<RouteErrorFallback />}>
               <AdminDashboard />
