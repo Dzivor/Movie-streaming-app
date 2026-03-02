@@ -4,6 +4,8 @@ import MoviePage from "../pages/MoviePage/MoviePage";
 import SignUpPage from "../pages/Sign-up/SignUpPage";
 import NotFound from "../pages/NotFoundPage/NotFound";
 import MovieDetailPage from "../pages/MovieDetailPage/MovieDetailPage";
+import PlayMoviePage from "../pages/PlayMoviePage/PlayMoviePage";
+import AdminDashboard from "../pages/AdminDashboard";
 import { ErrorBoundary, RouteErrorFallback } from "../components/ErrorBoundary";
 import MainLayout from "../layout/MainLayout";
 
@@ -16,6 +18,14 @@ const AppRoutes = () => {
           element={
             <ErrorBoundary fallback={<RouteErrorFallback />}>
               <SignUpPage />
+            </ErrorBoundary>
+          }
+        />
+        <Route
+          path="/admin"
+          element={
+            <ErrorBoundary fallback={<RouteErrorFallback />}>
+              <AdminDashboard />
             </ErrorBoundary>
           }
         />
@@ -43,6 +53,15 @@ const AppRoutes = () => {
             element={
               <ErrorBoundary fallback={<RouteErrorFallback />}>
                 <MovieDetailPage />
+              </ErrorBoundary>
+            }
+          />
+
+          <Route
+            path="/movie/:id/play"
+            element={
+              <ErrorBoundary fallback={<RouteErrorFallback />}>
+                <PlayMoviePage />
               </ErrorBoundary>
             }
           />

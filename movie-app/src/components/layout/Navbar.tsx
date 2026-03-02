@@ -1,13 +1,34 @@
-import { useState } from "react";
-import { Search } from "lucide-react";
-import { NavLink } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { Search, LogOut } from "lucide-react";
+import { NavLink, useSearchParams, useNavigate } from "react-router-dom";
 import { SignInDialog } from "../Auth-forms/SignInDialog";
+import { useAuth } from "../../hooks/useAuth";
 
 const Navbar = () => {
   const [isSignInOpen, setIsSignInOpen] = useState(false);
+  const [isLogoutConfirmOpen, setIsLogoutConfirmOpen] = useState(false);
+  const [searchParams, setSearchParams] = useSearchParams();
+  const { isAuthenticated, logout } = useAuth();
+  const navigate = useNavigate();
+
+  // Check if we should open the login modal from URL params
+  useEffect(() => {
+    if (searchParams.get("showLogin") === "true") {
+      setIsSignInOpen(true);
+      // Remove the param from URL
+      searchParams.delete("showLogin");
+      setSearchParams(searchParams, { replace: true });
+    }
+  }, [searchParams, setSearchParams]);
+
+  const handleLogout = () => {
+    logout();
+    setIsLogoutConfirmOpen(false);
+    navigate("/");
+  };
 
   return (
-    <nav className="bg-black  text-white min-h-screen">
+    <nav className="bg-black  text-white">
       <div className="max-w-7xl mx-auto px-4 md:px-8 py-4">
         <div className="grid grid-cols-3 items-center gap-4">
           {/* Logo - Left */}
@@ -62,22 +83,34 @@ const Navbar = () => {
               className="hidden md:block cursor-pointer text-gray-400 hover:text-red-500 transition-colors duration-300"
               size={20}
             />
-            <NavLink
-              to="/signin"
-              onClick={(event) => {
-                event.preventDefault();
-                setIsSignInOpen(true);
-              }}
-              className="hidden md:block text-gray-300 hover:text-white transition-colors duration-300 text-sm font-medium px-4 py-2 rounded-lg hover:bg-white/5"
-            >
-              Sign In
-            </NavLink>
-            <NavLink
-              to="/Sign Up"
-              className="bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 px-4 md:px-6 py-2 md:py-2.5 text-sm md:text-base font-semibold rounded-lg transition-all duration-300 shadow-lg shadow-red-600/30 hover:shadow-red-600/50 hover:scale-105"
-            >
-              Sign Up
-            </NavLink>
+            {isAuthenticated ? (
+              <button
+                onClick={() => setIsLogoutConfirmOpen(true)}
+                className="flex items-center gap-2 bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 px-4 md:px-6 py-2 md:py-2.5 text-sm md:text-base font-semibold rounded-lg transition-all duration-300 shadow-lg shadow-red-600/30 hover:shadow-red-600/50 hover:scale-105 text-white"
+              >
+                <LogOut size={18} />
+                <span className="hidden md:inline">Logout</span>
+              </button>
+            ) : (
+              <>
+                <NavLink
+                  to="/signin"
+                  onClick={(event) => {
+                    event.preventDefault();
+                    setIsSignInOpen(true);
+                  }}
+                  className="hidden md:block text-gray-300 hover:text-white transition-colors duration-300 text-sm font-medium px-4 py-2 rounded-lg hover:bg-white/5"
+                >
+                  Sign In
+                </NavLink>
+                <NavLink
+                  to="/Sign Up"
+                  className="bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 px-4 md:px-6 py-2 md:py-2.5 text-sm md:text-base font-semibold rounded-lg transition-all duration-300 shadow-lg shadow-red-600/30 hover:shadow-red-600/50 hover:scale-105"
+                >
+                  Sign Up
+                </NavLink>
+              </>
+            )}
           </div>
         </div>
 
@@ -101,18 +134,52 @@ const Navbar = () => {
           >
             Support
           </NavLink>
-          <NavLink
-            to="/signin"
-            onClick={(event) => {
-              event.preventDefault();
-              setIsSignInOpen(true);
-            }}
-            className="px-4 py-2 rounded-full hover:bg-red-600 hover:text-white transition-all duration-300 text-xs font-medium text-gray-300"
-          >
-            Sign In
-          </NavLink>
+          {!isAuthenticated && (
+            <NavLink
+              to="/signin"
+              onClick={(event) => {
+                event.preventDefault();
+                setIsSignInOpen(true);
+              }}
+              className="px-4 py-2 rounded-full hover:bg-red-600 hover:text-white transition-all duration-300 text-xs font-medium text-gray-300"
+            >
+              Sign In
+            </NavLink>
+          )}
         </div>
       </div>
+
+      {/* Logout Confirmation Dialog */}
+      {isLogoutConfirmOpen && (
+        <>
+          <div
+            className="fixed inset-0 bg-black/60 backdrop-blur-sm z-40"
+            onClick={() => setIsLogoutConfirmOpen(false)}
+          />
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+            <div className="bg-white rounded-2xl shadow-2xl max-w-sm w-full p-8 relative">
+              <h3 className="text-xl font-bold text-gray-800 mb-4">Confirm Logout</h3>
+              <p className="text-gray-600 mb-6">
+                Are you sure you want to logout? You'll need to sign in again to access your account.
+              </p>
+              <div className="flex gap-3 justify-end">
+                <button
+                  onClick={() => setIsLogoutConfirmOpen(false)}
+                  className="px-6 py-2 text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors duration-300 font-medium"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={handleLogout}
+                  className="px-6 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition-colors duration-300 font-medium"
+                >
+                  Logout
+                </button>
+              </div>
+            </div>
+          </div>
+        </>
+      )}
 
       <SignInDialog
         isOpen={isSignInOpen}

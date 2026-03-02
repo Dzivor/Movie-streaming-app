@@ -1,5 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import type { Movie } from "../../types/movie.types";
+import { useAuth } from "../../hooks/useAuth";
 
 interface MovieCardProps {
   movie: Movie;
@@ -7,8 +8,13 @@ interface MovieCardProps {
 
 const MovieCard: React.FC<MovieCardProps> = ({ movie }) => {
   const navigate = useNavigate();
+  const { isAuthenticated } = useAuth();
 
   const handleClick = () => {
+    if (!isAuthenticated) {
+      navigate("/Sign Up");
+      return;
+    }
     navigate(`/movie/${movie.id}`);
   };
 
