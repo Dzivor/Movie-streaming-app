@@ -1,9 +1,9 @@
 import crypto from "crypto";
 import jwt from "jsonwebtoken";
-import { AppDataSource } from "../../config/database";
-import { Role } from "../../entities/Role";
-import { User } from "../../entities/User";
-import { jwtConfig } from "../../config/jwt.config";
+import { AppDataSource } from "../db/database";
+import { Role } from "../entities/Role";
+import { User } from "../entities/User";
+import { jwtConfig } from "../config/jwt.config";
 
 export type RegisterInput = {
   email: string;

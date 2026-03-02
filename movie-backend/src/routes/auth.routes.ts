@@ -1,6 +1,11 @@
 import { Router } from "express";
-import { login, register, refresh, getCurrentUser } from "./auth.controller";
-import { validate } from "../../middlewares/validation.middleware";
+import {
+  login,
+  register,
+  refresh,
+  getCurrentUser,
+} from "../controllers/auth.controller";
+import { validate } from "../middlewares/validation.middleware";
 import {
   loginSchema,
   registerSchema,
@@ -8,9 +13,9 @@ import {
   RegisterDTO,
   LoginDTO,
   RefreshTokenDTO,
-} from "../../validation/auth.validation";
-import { authLimiter } from "../../middlewares/rateLimit.middleware";
-import { authenticateToken } from "../../middlewares/auth.middleware";
+} from "../validation/auth.validation";
+import { authLimiter } from "../middlewares/rateLimit.middleware";
+import { authenticateToken } from "../middlewares/auth.middleware";
 
 const router = Router();
 

@@ -1,7 +1,12 @@
+import "./types/express";
 import express from "express";
 import cors from "cors";
 import helmet from "helmet";
-import authRouter from "./modules/auth/auth.routes";
+import authRouter from "./routes/auth.routes";
+import moviesRouter from "./routes/movies.routes";
+import adminRouter from "./routes/admin.routes";
+import watchSessionsRouter from "./routes/watch-sessions.routes";
+import streamRouter from "./routes/stream.routes";
 import { errorHandler, notFoundHandler } from "./middlewares/error.middleware";
 import { generalLimiter } from "./middlewares/rateLimit.middleware";
 
@@ -23,6 +28,10 @@ app.get("/health", (req, res) => {
 });
 
 app.use("/auth", authRouter);
+app.use("/movies", moviesRouter);
+app.use("/admin", adminRouter);
+app.use("/watch-sessions", watchSessionsRouter);
+app.use("/stream", streamRouter);
 
 // 404 handler - must come after all routes
 app.use(notFoundHandler);

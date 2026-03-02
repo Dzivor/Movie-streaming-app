@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from "express";
-import { verifyAccessToken, TokenPayload } from "../modules/auth/auth.service";
+import { verifyAccessToken, TokenPayload } from "../services/auth.service";
 import { AppError } from "./error.middleware";
 
 // Extend Express Request to include user property

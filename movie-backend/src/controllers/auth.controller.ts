@@ -1,13 +1,13 @@
 import { Request, Response } from "express";
-import { AppDataSource } from "../../config/database";
-import { User } from "../../entities/User";
+import { AppDataSource } from "../db/database";
+import { User } from "../entities/User";
 import {
   loginUser,
   registerUser,
   refreshAccessToken,
   toAuthError,
   toPublicUser,
-} from "./auth.service";
+} from "../services/auth.service";
 
 export const register = async (req: Request, res: Response) => {
   try {
