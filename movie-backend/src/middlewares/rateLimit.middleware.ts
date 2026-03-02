@@ -6,6 +6,11 @@ export const generalLimiter = rateLimit({
   message: "Too many requests from this IP, please try again later.",
   standardHeaders: true,
   legacyHeaders: false,
+  handler: (req, res) => {
+    res.status(429).json({
+      message: "Too many requests. Please try again later.",
+    });
+  },
 });
 
 export const authLimiter = rateLimit({
@@ -16,4 +21,9 @@ export const authLimiter = rateLimit({
   standardHeaders: true,
   legacyHeaders: false,
   skipSuccessfulRequests: false,
+  handler: (req, res) => {
+    res.status(429).json({
+      message: "Too many login attempts. Please wait a few minutes before trying again.",
+    });
+  },
 });

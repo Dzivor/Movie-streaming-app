@@ -3,12 +3,17 @@ import { Eye, EyeClosed } from "lucide-react";
 import { ErrorMessage, Field, Form, Formik } from "formik";
 import { useNavigate } from "react-router-dom";
 import { signUpSchema } from "../../validation/signUpValidation";
-import { useAuth } from "../../hooks/useAuth";
+import { apiClient } from "../../backend/apiClient";
 
 const SignUpPage = () => {
   const [showPassword, setShowPassword] = useState(false);
-  const { register, isLoading, error } = useAuth();
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
+
+  const handleSignInRedirect = () => {
+    navigate("/?showLogin=true");
+  };
 
   const handleSubmit = async (values: {
     firstName: string;
@@ -18,15 +23,21 @@ const SignUpPage = () => {
     confirmPassword: string;
   }) => {
     try {
-      await register(
-        values.firstName,
-        values.lastName,
-        values.email,
-        values.password,
-      );
-      navigate("/");
-    } catch {
-      // Error is handled by context
+      setError(null);
+      setIsLoading(true);
+      await apiClient.registerOnly({
+        firstName: values.firstName,
+        lastName: values.lastName,
+        email: values.email,
+        password: values.password,
+      });
+      // Redirect to homepage with login modal trigger
+      navigate("/?showLogin=true");
+    } catch (err) {
+      const message = err instanceof Error ? err.message : "Registration failed";
+      setError(message);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -193,6 +204,17 @@ const SignUpPage = () => {
             >
               {isLoading ? "Creating Account..." : "Create Account"}
             </button>
+
+            <p className="text-center text-sm text-gray-400">
+              Already have an account?{" "}
+              <button
+                type="button"
+                onClick={handleSignInRedirect}
+                className="text-red-500 hover:text-red-400 font-medium"
+              >
+                Sign In
+              </button>
+            </p>
           </Form>
         </Formik>
       </div>

@@ -2,7 +2,9 @@ import { Request, Response, NextFunction } from "express";
 
 import * as yup from "yup";
 
-export const validate = <T extends yup.AnyObject>(schema: yup.ObjectSchema<T>) => {
+export const validate = <T extends yup.AnyObject>(
+  schema: yup.ObjectSchema<T>,
+) => {
   return async (req: Request, res: Response, next: NextFunction) => {
     try {
       const validated = await schema.validate(req.body, {

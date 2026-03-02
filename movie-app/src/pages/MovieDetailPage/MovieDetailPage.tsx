@@ -8,7 +8,7 @@ import {
   Calendar,
   Star,
 } from "lucide-react";
-import Navbar from "../../components/layout/Navbar";
+import { useEffect } from "react";
 import Footer from "../../components/layout/Footer";
 import {
   trendingMovies,
@@ -22,6 +22,10 @@ import {
 const MovieDetailPage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
+
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: "auto" });
+  }, []);
 
   // Find movie from all available movie arrays
   const allMovies = [
@@ -97,8 +101,6 @@ const MovieDetailPage = () => {
 
   return (
     <div className="bg-black text-white min-h-screen">
-      <Navbar />
-
       {/* Hero Section with Movie Banner */}
       <div className="relative h-[70vh] overflow-hidden">
         {/* Background Image with Gradient Overlay */}
@@ -124,7 +126,10 @@ const MovieDetailPage = () => {
 
             {/* Action Buttons */}
             <div className="flex items-center gap-4 mb-6">
-              <button className="flex items-center gap-2 bg-red-600 hover:bg-red-700 px-8 py-3 rounded-lg font-semibold transition-colors duration-300">
+              <button
+                onClick={() => navigate(`/movie/${movie.id}/play`)}
+                className="flex items-center gap-2 bg-red-600 hover:bg-red-700 px-8 py-3 rounded-lg font-semibold transition-colors duration-300"
+              >
                 <Play size={20} fill="white" />
                 Play Now
               </button>

@@ -1,4 +1,6 @@
 import { Request, Response } from "express";
+import { AppDataSource } from "../../config/database";
+import { User } from "../../entities/User";
 import {
   loginUser,
   registerUser,
@@ -69,12 +71,23 @@ export const getCurrentUser = async (req: Request, res: Response) => {
       });
     }
 
+    const userRepository = AppDataSource.getRepository(User);
+    const user = await userRepository.findOne({
+      where: { id: req.user.userId },
+    });
+
+    if (!user) {
+      return res.status(404).json({
+        message: "User not found",
+      });
+    }
+
     return res.status(200).json({
       user: {
-        id: req.user.id,
-        email: req.user.email,
-        firstName: req.user.firstName,
-        lastName: req.user.lastName,
+        id: user.id,
+        email: user.email,
+        firstName: user.first_name,
+        lastName: user.last_name,
       },
     });
   } catch (error) {

@@ -5,7 +5,11 @@ import { useNavigate } from "react-router-dom";
 import { signInSchema } from "../../validation/signInValidation";
 import { useAuth } from "../../hooks/useAuth";
 
-export function Login() {
+interface LoginProps {
+  onClose?: () => void;
+}
+
+export function Login({ onClose }: LoginProps = {}) {
   const [showPassword, setShowPassword] = useState(false);
   const { login, isLoading, error } = useAuth();
   const navigate = useNavigate();
@@ -13,7 +17,8 @@ export function Login() {
   const handleSubmit = async (values: { email: string; password: string }) => {
     try {
       await login(values.email, values.password);
-      navigate("/");
+      onClose?.(); // Close modal if callback provided
+      navigate("/Movies");
     } catch {
       // Error is handled by context
     }

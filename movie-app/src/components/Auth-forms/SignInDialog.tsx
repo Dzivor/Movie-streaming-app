@@ -26,7 +26,7 @@ export function SignInDialog({ isOpen, onClose }: SignInDialogProps) {
             <X size={24} />
           </button>
 
-          <Login />
+          <Login onClose={onClose} />
         </div>
       </div>
     </>

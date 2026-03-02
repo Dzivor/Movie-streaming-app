@@ -7,4 +7,6 @@ logs/
 .DS_Store
 backendWorkflow.md
 frontendWorkflow.md
+AUTH_IMPLEMENTATION.md
+ENTITY_RELATIONSHIPS.md
 

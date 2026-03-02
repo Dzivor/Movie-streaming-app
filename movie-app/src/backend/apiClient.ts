@@ -26,6 +26,13 @@ export interface RegisterPayload {
   password: string;
 }
 
+interface BackendRegisterPayload {
+  first_name: string;
+  last_name: string;
+  email: string;
+  password: string;
+}
+
 class ApiClient {
   private token: string | null = localStorage.getItem("accessToken");
 
@@ -71,9 +78,16 @@ class ApiClient {
 
   // Auth endpoints
   async register(payload: RegisterPayload): Promise<AuthResponse> {
+    const backendPayload: BackendRegisterPayload = {
+      email: payload.email,
+      password: payload.password,
+      first_name: payload.firstName,
+      last_name: payload.lastName,
+    };
+
     const data = await this.request<AuthResponse>("/auth/register", {
       method: "POST",
-      body: JSON.stringify(payload),
+      body: JSON.stringify(backendPayload),
     });
 
     this.setToken(data.tokens.accessToken);
@@ -97,6 +111,24 @@ class ApiClient {
   async logout(): Promise<void> {
     this.setToken(null);
     localStorage.removeItem("refreshToken");
+  }
+
+  // Register without auto-login (for signup flow)
+  async registerOnly(payload: RegisterPayload): Promise<{ message: string }> {
+    const backendPayload: BackendRegisterPayload = {
+      email: payload.email,
+      password: payload.password,
+      first_name: payload.firstName,
+      last_name: payload.lastName,
+    };
+
+    const data = await this.request<AuthResponse>("/auth/register", {
+      method: "POST",
+      body: JSON.stringify(backendPayload),
+    });
+
+    // Don't store tokens - user needs to login manually
+    return { message: data.message };
   }
 }
 
