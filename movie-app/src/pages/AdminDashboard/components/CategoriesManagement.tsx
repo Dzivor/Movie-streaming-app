@@ -72,14 +72,14 @@ const CategoriesManagement: React.FC = () => {
       {/* Header with Add Button */}
       <div className="flex justify-between items-center">
         <div>
-          <h3 className="text-2xl font-bold text-gray-800">Categories</h3>
-          <p className="text-gray-600 mt-1">
+          <h3 className="text-2xl font-bold text-white">Categories</h3>
+          <p className="text-gray-400 mt-1">
             Manage movie categories and classifications
           </p>
         </div>
         <button
           onClick={() => setIsAddingCategory(true)}
-          className="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors font-medium flex items-center gap-2"
+          className="px-4 py-2 bg-gradient-to-r from-red-600 to-red-700 text-white rounded-lg hover:from-red-700 hover:to-red-800 transition-colors font-medium flex items-center gap-2"
         >
           <Plus size={20} />
           Add Category
@@ -88,13 +88,13 @@ const CategoriesManagement: React.FC = () => {
 
       {/* Add Category Form */}
       {isAddingCategory && (
-        <div className="bg-white rounded-lg shadow-md p-6">
-          <h4 className="text-lg font-bold text-gray-800 mb-4">
+        <div className="bg-gray-900 border border-gray-800 rounded-lg shadow-md p-6">
+          <h4 className="text-lg font-bold text-white mb-4">
             Add New Category
           </h4>
           <div className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-gray-300 mb-2">
                 Category Name *
               </label>
               <input
@@ -103,12 +103,12 @@ const CategoriesManagement: React.FC = () => {
                 onChange={(e) =>
                   setNewCategory({ ...newCategory, name: e.target.value })
                 }
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                className="w-full px-4 py-2 bg-gray-800 border border-gray-700 text-white rounded-lg focus:ring-2 focus:ring-red-600 focus:border-red-600"
                 placeholder="e.g., Thriller"
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-gray-300 mb-2">
                 Description
               </label>
               <textarea
@@ -120,14 +120,14 @@ const CategoriesManagement: React.FC = () => {
                   })
                 }
                 rows={3}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                className="w-full px-4 py-2 bg-gray-800 border border-gray-700 text-white rounded-lg focus:ring-2 focus:ring-red-600 focus:border-red-600"
                 placeholder="Brief description of the category"
               />
             </div>
             <div className="flex gap-3">
               <button
                 onClick={handleAddCategory}
-                className="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors font-medium"
+                className="px-4 py-2 bg-gradient-to-r from-red-600 to-red-700 text-white rounded-lg hover:from-red-700 hover:to-red-800 transition-colors font-medium"
               >
                 Save Category
               </button>
@@ -136,7 +136,7 @@ const CategoriesManagement: React.FC = () => {
                   setIsAddingCategory(false);
                   setNewCategory({ name: "", description: "" });
                 }}
-                className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors font-medium"
+                className="px-4 py-2 border border-gray-700 text-gray-300 rounded-lg hover:bg-gray-800 transition-colors font-medium"
               >
                 Cancel
               </button>
@@ -150,31 +150,31 @@ const CategoriesManagement: React.FC = () => {
         {categories.map((category) => (
           <div
             key={category.id}
-            className="bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow"
+            className="bg-gray-900 border border-gray-800 rounded-lg shadow-md hover:shadow-lg hover:shadow-red-600/20 transition-all"
           >
             <div className="p-6">
               <div className="flex items-start justify-between mb-4">
                 <div className="flex items-center gap-3">
-                  <div className="w-12 h-12 bg-indigo-100 rounded-lg flex items-center justify-center">
-                    <FolderOpen className="text-indigo-600" size={24} />
+                  <div className="w-12 h-12 bg-red-900/20 rounded-lg flex items-center justify-center">
+                    <FolderOpen className="text-red-500" size={24} />
                   </div>
                   <div>
-                    <h4 className="text-lg font-bold text-gray-800">
+                    <h4 className="text-lg font-bold text-white">
                       {category.name}
                     </h4>
-                    <p className="text-sm text-gray-500">
+                    <p className="text-sm text-gray-400">
                       {category.movieCount} movies
                     </p>
                   </div>
                 </div>
               </div>
 
-              <p className="text-sm text-gray-600 mb-4 line-clamp-2">
+              <p className="text-sm text-gray-400 mb-4 line-clamp-2">
                 {category.description}
               </p>
 
-              <div className="flex items-center justify-between pt-4 border-t border-gray-200">
-                <span className="text-xs text-gray-500">
+              <div className="flex items-center justify-between pt-4 border-t border-gray-800">
+                <span className="text-xs text-gray-400">
                   Created: {category.createdAt}
                 </span>
                 <div className="flex gap-2">

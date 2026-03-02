@@ -47,15 +47,13 @@ const UploadMovie: React.FC = () => {
 
   return (
     <div className="max-w-4xl">
-      <div className="bg-white rounded-lg shadow-md p-6">
-        <h3 className="text-xl font-bold text-gray-800 mb-6">
-          Upload New Movie
-        </h3>
+      <div className="bg-gray-900 border border-gray-800 rounded-lg shadow-md p-6">
+        <h3 className="text-xl font-bold text-white mb-6">Upload New Movie</h3>
 
         <form onSubmit={handleSubmit} className="space-y-6">
           {/* Title */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-medium text-gray-300 mb-2">
               Movie Title *
             </label>
             <input
@@ -64,14 +62,14 @@ const UploadMovie: React.FC = () => {
               value={formData.title}
               onChange={handleInputChange}
               required
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+              className="w-full px-4 py-2 bg-gray-800 border border-gray-700 text-white rounded-lg focus:ring-2 focus:ring-red-600 focus:border-red-600 placeholder-gray-500"
               placeholder="Enter movie title"
             />
           </div>
 
           {/* Description */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-medium text-gray-300 mb-2">
               Description *
             </label>
             <textarea
@@ -80,7 +78,7 @@ const UploadMovie: React.FC = () => {
               onChange={handleInputChange}
               required
               rows={4}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+              className="w-full px-4 py-2 bg-gray-800 border border-gray-700 text-white rounded-lg focus:ring-2 focus:ring-red-600 focus:border-red-600 placeholder-gray-500"
               placeholder="Enter movie description"
             />
           </div>
@@ -88,7 +86,7 @@ const UploadMovie: React.FC = () => {
           {/* Category and Duration Row */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-gray-300 mb-2">
                 Category *
               </label>
               <select
@@ -96,7 +94,7 @@ const UploadMovie: React.FC = () => {
                 value={formData.category}
                 onChange={handleInputChange}
                 required
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                className="w-full px-4 py-2 bg-gray-800 border border-gray-700 text-white rounded-lg focus:ring-2 focus:ring-red-600 focus:border-red-600"
                 aria-label="category"
               >
                 <option value="">Select category</option>
@@ -110,7 +108,7 @@ const UploadMovie: React.FC = () => {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-gray-300 mb-2">
                 Duration (minutes) *
               </label>
               <input
@@ -119,7 +117,7 @@ const UploadMovie: React.FC = () => {
                 value={formData.duration}
                 onChange={handleInputChange}
                 required
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                className="w-full px-4 py-2 bg-gray-800 border border-gray-700 text-white rounded-lg focus:ring-2 focus:ring-red-600 focus:border-red-600 placeholder-gray-500"
                 placeholder="120"
               />
             </div>
@@ -128,7 +126,7 @@ const UploadMovie: React.FC = () => {
           {/* Age Rating and Release Year Row */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-gray-300 mb-2">
                 Age Rating *
               </label>
               <select
@@ -136,20 +134,20 @@ const UploadMovie: React.FC = () => {
                 value={formData.ageRating}
                 onChange={handleInputChange}
                 required
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                className="w-full px-4 py-2 bg-gray-800 border border-gray-700 text-white rounded-lg focus:ring-2 focus:ring-red-600 focus:border-red-600"
                 aria-label="Select age rating"
               >
                 <option value="">Select rating</option>
-                <option value="G">G - General Audiences</option>
+                <option value="G">G-General Audiences</option>
                 <option value="PG">PG - Parental Guidance</option>
                 <option value="PG-13">PG-13</option>
                 <option value="R">R - Restricted</option>
-                <option value="NC-17">NC-17</option>
+                <option value="NC-17"> NC-17</option>
               </select>
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-gray-300 mb-2">
                 Release Year *
               </label>
               <input
@@ -158,7 +156,7 @@ const UploadMovie: React.FC = () => {
                 value={formData.releaseYear}
                 onChange={handleInputChange}
                 required
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                className="w-full px-4 py-2 bg-gray-800 border border-gray-700 text-white rounded-lg focus:ring-2 focus:ring-red-600 focus:border-red-600 placeholder-gray-500"
                 aria-label="Release year"
                 placeholder="2024"
               />
@@ -167,13 +165,13 @@ const UploadMovie: React.FC = () => {
 
           {/* Thumbnail Upload */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-medium text-gray-300 mb-2">
               Thumbnail Image *
             </label>
-            <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 hover:border-indigo-500 transition-colors">
+            <div className="border-2 border-dashed border-gray-700 bg-gray-800 rounded-lg p-6 hover:border-red-600 transition-colors">
               <div className="flex flex-col items-center">
-                <Image className="text-gray-400 mb-2" size={48} />
-                <p className="text-sm text-gray-600 mb-2">
+                <Image className="text-gray-500 mb-2" size={48} />
+                <p className="text-sm text-gray-400 mb-2">
                   Click to upload or drag and drop
                 </p>
                 <p className="text-xs text-gray-500">PNG, JPG up to 5MB</p>
@@ -189,13 +187,13 @@ const UploadMovie: React.FC = () => {
 
           {/* Video File Upload */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-medium text-gray-300 mb-2">
               Video File *
             </label>
-            <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 hover:border-indigo-500 transition-colors">
+            <div className="border-2 border-dashed border-gray-700 bg-gray-800 rounded-lg p-6 hover:border-red-600 transition-colors">
               <div className="flex flex-col items-center">
-                <Film className="text-gray-400 mb-2" size={48} />
-                <p className="text-sm text-gray-600 mb-2">
+                <Film className="text-gray-500 mb-2" size={48} />
+                <p className="text-sm text-gray-400 mb-2">
                   Click to upload or drag and drop
                 </p>
                 <p className="text-xs text-gray-500">MP4, MKV up to 5GB</p>
@@ -211,22 +209,22 @@ const UploadMovie: React.FC = () => {
 
           {/* Upload Progress */}
           {isUploading && (
-            <div className="bg-green-50 border border-green-200 rounded-lg p-4">
+            <div className="bg-red-900/20 border border-red-800 rounded-lg p-4">
               <div className="flex items-center justify-between mb-2">
-                <span className="text-sm font-medium text-green-800">
+                <span className="text-sm font-medium text-red-400">
                   Upload Progress
                 </span>
-                <span className="text-sm font-bold text-green-800">
+                <span className="text-sm font-bold text-red-400">
                   {uploadProgress}%
                 </span>
               </div>
-              <div className="w-full bg-green-200 rounded-full h-3">
+              <div className="w-full bg-gray-800 rounded-full h-3">
                 <div
-                  className="bg-green-600 h-3 rounded-full transition-all duration-300"
+                  className="bg-gradient-to-r from-red-600 to-red-700 h-3 rounded-full transition-all duration-300"
                   style={{ width: `${uploadProgress}%` }}
                 />
               </div>
-              <p className="text-xs text-green-700 mt-2">
+              <p className="text-xs text-gray-400 mt-2">
                 {uploadProgress < 30 && "Uploading files..."}
                 {uploadProgress >= 30 &&
                   uploadProgress < 60 &&
@@ -244,14 +242,14 @@ const UploadMovie: React.FC = () => {
             <button
               type="submit"
               disabled={isUploading}
-              className="px-6 py-3 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors font-medium flex items-center gap-2"
+              className="px-6 py-3 bg-gradient-to-r from-red-600 to-red-700 text-white rounded-lg hover:from-red-700 hover:to-red-800 disabled:bg-gray-700 disabled:cursor-not-allowed transition-all duration-300 font-medium flex items-center gap-2 shadow-lg shadow-red-600/30 hover:shadow-red-600/50"
             >
               <Upload size={20} />
               {isUploading ? "Uploading..." : "Upload Movie"}
             </button>
             <button
               type="button"
-              className="px-6 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors font-medium"
+              className="px-6 py-3 border border-gray-700 bg-gray-800 text-gray-300 rounded-lg hover:bg-gray-700 transition-colors font-medium"
             >
               Cancel
             </button>

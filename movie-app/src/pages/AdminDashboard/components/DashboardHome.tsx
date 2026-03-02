@@ -3,24 +3,24 @@ import { Film, Users, CreditCard, Upload } from "lucide-react";
 
 const DashboardHome: React.FC = () => {
   const stats = [
-    { title: "Total Movies", value: "250", icon: Film, color: "bg-blue-500" },
+    { title: "Total Movies", value: "250", icon: Film, color: "bg-red-600" },
     {
       title: "Total Users",
       value: "1,543",
       icon: Users,
-      color: "bg-green-500",
+      color: "bg-red-700",
     },
     {
       title: "Active Subscriptions",
       value: "892",
       icon: CreditCard,
-      color: "bg-purple-500",
+      color: "bg-red-600",
     },
     {
       title: "Uploads Today",
       value: "12",
       icon: Upload,
-      color: "bg-orange-500",
+      color: "bg-red-700",
     },
   ];
 
@@ -61,14 +61,14 @@ const DashboardHome: React.FC = () => {
           return (
             <div
               key={index}
-              className="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow"
+              className="bg-gray-900 border border-gray-800 rounded-lg shadow-md p-6 hover:shadow-lg hover:shadow-red-600/20 transition-all"
             >
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-gray-600 font-medium">
+                  <p className="text-sm text-gray-400 font-medium">
                     {stat.title}
                   </p>
-                  <p className="text-3xl font-bold text-gray-800 mt-2">
+                  <p className="text-3xl font-bold text-white mt-2">
                     {stat.value}
                   </p>
                 </div>
@@ -84,20 +84,18 @@ const DashboardHome: React.FC = () => {
       </div>
 
       {/* Recent Activity Feed */}
-      <div className="bg-white rounded-lg shadow-md p-6">
-        <h3 className="text-xl font-bold text-gray-800 mb-4">
-          Recent Activity
-        </h3>
+      <div className="bg-gray-900 border border-gray-800 rounded-lg shadow-md p-6">
+        <h3 className="text-xl font-bold text-white mb-4">Recent Activity</h3>
         <div className="space-y-4">
           {recentActivities.map((activity, index) => (
             <div
               key={index}
-              className="flex items-start gap-4 pb-4 border-b last:border-b-0 last:pb-0"
+              className="flex items-start gap-4 pb-4 border-b border-gray-800 last:border-b-0 last:pb-0"
             >
-              <div className="w-2 h-2 bg-indigo-600 rounded-full mt-2"></div>
+              <div className="w-2 h-2 bg-red-600 rounded-full mt-2"></div>
               <div className="flex-1">
-                <p className="font-semibold text-gray-800">{activity.action}</p>
-                <p className="text-sm text-gray-600">{activity.detail}</p>
+                <p className="font-semibold text-white">{activity.action}</p>
+                <p className="text-sm text-gray-400">{activity.detail}</p>
               </div>
               <span className="text-xs text-gray-500">{activity.time}</span>
             </div>
@@ -106,16 +104,16 @@ const DashboardHome: React.FC = () => {
       </div>
 
       {/* Quick Actions */}
-      <div className="bg-white rounded-lg shadow-md p-6">
-        <h3 className="text-xl font-bold text-gray-800 mb-4">Quick Actions</h3>
+      <div className="bg-gray-900 border border-gray-800 rounded-lg shadow-md p-6">
+        <h3 className="text-xl font-bold text-white mb-4">Quick Actions</h3>
         <div className="flex flex-wrap gap-4">
-          <button className="px-6 py-3 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors font-medium">
+          <button className="px-6 py-3 bg-gradient-to-r from-red-600 to-red-700 text-white rounded-lg hover:from-red-700 hover:to-red-800 transition-all duration-300 font-medium shadow-lg shadow-red-600/30 hover:shadow-red-600/50">
             + Upload Movie
           </button>
-          <button className="px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors font-medium">
+          <button className="px-6 py-3 bg-gray-800 text-white rounded-lg hover:bg-gray-700 transition-colors font-medium border border-gray-700">
             + Add Category
           </button>
-          <button className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium">
+          <button className="px-6 py-3 bg-gray-800 text-white rounded-lg hover:bg-gray-700 transition-colors font-medium border border-gray-700">
             View All Movies
           </button>
         </div>
