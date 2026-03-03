@@ -3,7 +3,6 @@ import { Movie } from "../entities/Movie";
 import { MediaFile } from "../entities/MediaFile";
 import { Category } from "../entities/Category";
 import { AdminLog } from "../entities/AdminLog";
-import { User } from "../entities/User";
 
 export interface UploadMovieInput {
   title: string;
