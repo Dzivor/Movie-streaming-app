@@ -1,5 +1,14 @@
 import { Request, Response } from "express";
-import { uploadMovie, getAdminLogs } from "../services/admin.service";
+import { randomUUID } from "crypto";
+import {
+  uploadMovie,
+  getAdminLogs,
+  createCategory,
+  getAllCategories,
+  getCategoryById,
+  updateCategory,
+  deleteCategory,
+} from "../services/admin.service";
 import { uploadToR2, deleteFromR2 } from "../services/r2.service";
 
 export const upload = async (req: Request, res: Response) => {
@@ -55,12 +64,19 @@ export const upload = async (req: Request, res: Response) => {
       });
     }
 
+    // Generate a single UUID for organizing both files together
+    const movieIdSeed = randomUUID();
+
     // Upload thumbnail to R2
-    const thumbnailResult = await uploadToR2(thumbnailFile, "thumbnail");
+    const thumbnailResult = await uploadToR2(
+      thumbnailFile,
+      "thumbnail",
+      movieIdSeed,
+    );
     uploadedThumbnailKey = thumbnailResult.key;
 
     // Upload video to R2
-    const videoResult = await uploadToR2(videoFile, "video");
+    const videoResult = await uploadToR2(videoFile, "video", movieIdSeed);
     uploadedVideoKey = videoResult.key;
 
     const uploadData = {
@@ -101,6 +117,7 @@ export const upload = async (req: Request, res: Response) => {
       );
     }
 
+    console.error("Upload endpoint error:", error);
     const message =
       error instanceof Error ? error.message : "Failed to upload movie";
     const statusCode = (error as any).statusCode || 500;
@@ -135,6 +152,176 @@ export const getLogs = async (req: Request, res: Response) => {
     return res.status(500).json({
       status: "error",
       message: "Failed to fetch admin logs",
+    });
+  }
+};
+
+export const addCategory = async (req: Request, res: Response) => {
+  try {
+    if (!req.user) {
+      return res.status(401).json({
+        status: "error",
+        message: "Unauthorized",
+      });
+    }
+
+    const { name, description } = req.body;
+
+    const result = await createCategory(name, description, req.user.userId);
+
+    return res.status(201).json({
+      status: "success",
+      message: result.message,
+      data: result.category,
+    });
+  } catch (error) {
+    if (error instanceof Error && error.message.includes("already exists")) {
+      return res.status(409).json({
+        status: "error",
+        message: error.message,
+      });
+    }
+
+    return res.status(500).json({
+      status: "error",
+      message:
+        error instanceof Error ? error.message : "Failed to create category",
+    });
+  }
+};
+
+export const getCategories = async (req: Request, res: Response) => {
+  try {
+    const categories = await getAllCategories();
+
+    return res.status(200).json({
+      status: "success",
+      data: categories,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      status: "error",
+      message:
+        error instanceof Error ? error.message : "Failed to fetch categories",
+    });
+  }
+};
+
+export const getCategory = async (
+  req: Request<{ id: string }>,
+  res: Response,
+) => {
+  try {
+    const { id } = req.params;
+    const category = await getCategoryById(id);
+
+    return res.status(200).json({
+      status: "success",
+      data: category,
+    });
+  } catch (error) {
+    if (error instanceof Error && error.message.includes("not found")) {
+      return res.status(404).json({
+        status: "error",
+        message: error.message,
+      });
+    }
+
+    return res.status(500).json({
+      status: "error",
+      message:
+        error instanceof Error ? error.message : "Failed to fetch category",
+    });
+  }
+};
+
+export const editCategory = async (
+  req: Request<{ id: string }>,
+  res: Response,
+) => {
+  try {
+    if (!req.user) {
+      return res.status(401).json({
+        status: "error",
+        message: "Unauthorized",
+      });
+    }
+
+    const { id } = req.params;
+    const { name, description } = req.body;
+
+    const result = await updateCategory(id, name, description, req.user.userId);
+
+    return res.status(200).json({
+      status: "success",
+      message: result.message,
+      data: result.category,
+    });
+  } catch (error) {
+    if (error instanceof Error && error.message.includes("not found")) {
+      return res.status(404).json({
+        status: "error",
+        message: error.message,
+      });
+    }
+
+    if (error instanceof Error && error.message.includes("already exists")) {
+      return res.status(409).json({
+        status: "error",
+        message: error.message,
+      });
+    }
+
+    return res.status(500).json({
+      status: "error",
+      message:
+        error instanceof Error ? error.message : "Failed to update category",
+    });
+  }
+};
+
+export const removeCategory = async (
+  req: Request<{ id: string }>,
+  res: Response,
+) => {
+  try {
+    if (!req.user) {
+      return res.status(401).json({
+        status: "error",
+        message: "Unauthorized",
+      });
+    }
+
+    const { id } = req.params;
+
+    const result = await deleteCategory(id, req.user.userId);
+
+    return res.status(200).json({
+      status: "success",
+      message: result.message,
+    });
+  } catch (error) {
+    if (error instanceof Error && error.message.includes("not found")) {
+      return res.status(404).json({
+        status: "error",
+        message: error.message,
+      });
+    }
+
+    if (
+      error instanceof Error &&
+      error.message.includes("Cannot delete category")
+    ) {
+      return res.status(400).json({
+        status: "error",
+        message: error.message,
+      });
+    }
+
+    return res.status(500).json({
+      status: "error",
+      message:
+        error instanceof Error ? error.message : "Failed to delete category",
     });
   }
 };

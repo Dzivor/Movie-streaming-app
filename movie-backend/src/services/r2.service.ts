@@ -11,16 +11,16 @@ export interface UploadedFile {
 }
 
 /**
- * Uploads a file to Cloudflare R2 bucket
+ *
  * @param file - Multer file object (with buffer from memory storage)
  * @param fileType - Type of file (thumbnail or video)
  * @param movieIdSeed - Optional ID for organizing files (uses UUID if not provided)
  * @returns Object containing the R2 key and public URL
- */
+ **/
 export const uploadToR2 = async (
   file: Express.Multer.File,
   fileType: FileType,
-  movieIdSeed?: string,
+  movieIdSeed: string,
 ): Promise<UploadedFile> => {
   try {
     const seed = movieIdSeed || randomUUID();
@@ -63,7 +63,9 @@ export const deleteFromR2 = async (key: string): Promise<void> => {
     );
   } catch (error) {
     console.error("R2 delete failed:", error);
-    throw new Error("Failed to delete file from R2 storage");
+    throw new Error(
+      `Failed to delete file from R2 storage: ${error instanceof Error ? error.message : "Unknown error"}`,
+    );
   }
 };
 

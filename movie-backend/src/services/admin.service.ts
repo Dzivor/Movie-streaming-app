@@ -3,6 +3,8 @@ import { Movie } from "../entities/Movie";
 import { MediaFile } from "../entities/MediaFile";
 import { Category } from "../entities/Category";
 import { AdminLog } from "../entities/AdminLog";
+import { User } from "../entities/User";
+import { Role } from "../entities/Role";
 
 export interface UploadMovieInput {
   title: string;
@@ -96,7 +98,9 @@ export const uploadMovie = async (
     if (error instanceof UploadError) {
       throw error;
     }
-    throw new Error("Failed to upload movie");
+    const errorMessage = error instanceof Error ? error.message : String(error);
+    console.error("Upload movie error details:", error);
+    throw new Error(`Failed to upload movie: ${errorMessage}`);
   } finally {
     await queryRunner.release();
   }
@@ -128,5 +132,227 @@ export const getAdminLogs = async (adminId?: string, limit: number = 50) => {
     }));
   } catch (error) {
     throw new Error("Failed to fetch admin logs");
+  }
+};
+
+export const createCategory = async (
+  name: string,
+  description?: string,
+  adminId?: string,
+) => {
+  const queryRunner = AppDataSource.createQueryRunner();
+  await queryRunner.connect();
+  await queryRunner.startTransaction();
+
+  try {
+    const categoryRepository = queryRunner.manager.getRepository(Category);
+
+    // Check if category with same name already exists
+    const existingCategory = await categoryRepository.findOne({
+      where: { name },
+    });
+
+    if (existingCategory) {
+      throw new UploadError("Category with this name already exists");
+    }
+
+    // Create category
+    const category = categoryRepository.create({
+      name,
+      description,
+    });
+
+    const savedCategory = await queryRunner.manager.save(category);
+
+    // Log admin action if admin ID is provided
+    if (adminId) {
+      const adminLogRepository = queryRunner.manager.getRepository(AdminLog);
+      const log = adminLogRepository.create({
+        admin: { id: adminId },
+        action: "create",
+        entity_type: "category",
+        entity_id: savedCategory.id,
+      });
+      await queryRunner.manager.save(log);
+    }
+
+    await queryRunner.commitTransaction();
+
+    return {
+      message: "Category created successfully",
+      category: savedCategory,
+    };
+  } catch (error) {
+    await queryRunner.rollbackTransaction();
+    if (error instanceof UploadError) {
+      throw error;
+    }
+    throw new Error("Failed to create category");
+  } finally {
+    await queryRunner.release();
+  }
+};
+
+export const getAllCategories = async () => {
+  try {
+    const categoryRepository = AppDataSource.getRepository(Category);
+    const categories = await categoryRepository.find({
+      relations: ["movies"],
+      order: { created_at: "DESC" },
+    });
+
+    return categories.map((category) => ({
+      id: category.id,
+      name: category.name,
+      description: category.description,
+      movieCount: category.movies?.length || 0,
+      created_at: category.created_at,
+    }));
+  } catch (error) {
+    throw new Error("Failed to fetch categories");
+  }
+};
+
+export const getCategoryById = async (id: string) => {
+  try {
+    const categoryRepository = AppDataSource.getRepository(Category);
+    const category = await categoryRepository.findOne({
+      where: { id },
+      relations: ["movies"],
+    });
+
+    if (!category) {
+      throw new UploadError("Category not found");
+    }
+
+    return {
+      id: category.id,
+      name: category.name,
+      description: category.description,
+      movieCount: category.movies?.length || 0,
+      created_at: category.created_at,
+    };
+  } catch (error) {
+    if (error instanceof UploadError) {
+      throw error;
+    }
+    throw new Error("Failed to fetch category");
+  }
+};
+
+export const updateCategory = async (
+  id: string,
+  name: string,
+  description?: string,
+  adminId?: string,
+) => {
+  const queryRunner = AppDataSource.createQueryRunner();
+  await queryRunner.connect();
+  await queryRunner.startTransaction();
+
+  try {
+    const categoryRepository = queryRunner.manager.getRepository(Category);
+
+    const category = await categoryRepository.findOne({ where: { id } });
+
+    if (!category) {
+      throw new UploadError("Category not found");
+    }
+
+    // Check if new name conflicts with existing category
+    if (name !== category.name) {
+      const existingCategory = await categoryRepository.findOne({
+        where: { name },
+      });
+
+      if (existingCategory) {
+        throw new UploadError("Category with this name already exists");
+      }
+    }
+
+    category.name = name;
+    category.description = description;
+
+    const updatedCategory = await queryRunner.manager.save(category);
+
+    // Log admin action
+    if (adminId) {
+      const adminLogRepository = queryRunner.manager.getRepository(AdminLog);
+      const log = adminLogRepository.create({
+        admin: { id: adminId },
+        action: "update",
+        entity_type: "category",
+        entity_id: updatedCategory.id,
+      });
+      await queryRunner.manager.save(log);
+    }
+
+    await queryRunner.commitTransaction();
+
+    return {
+      message: "Category updated successfully",
+      category: updatedCategory,
+    };
+  } catch (error) {
+    await queryRunner.rollbackTransaction();
+    if (error instanceof UploadError) {
+      throw error;
+    }
+    throw new Error("Failed to update category");
+  } finally {
+    await queryRunner.release();
+  }
+};
+
+export const deleteCategory = async (id: string, adminId?: string) => {
+  const queryRunner = AppDataSource.createQueryRunner();
+  await queryRunner.connect();
+  await queryRunner.startTransaction();
+
+  try {
+    const categoryRepository = queryRunner.manager.getRepository(Category);
+
+    const category = await categoryRepository.findOne({
+      where: { id },
+      relations: ["movies"],
+    });
+
+    if (!category) {
+      throw new UploadError("Category not found");
+    }
+
+    if (category.movies && category.movies.length > 0) {
+      throw new UploadError(
+        "Cannot delete category with associated movies. Please reassign or delete movies first.",
+      );
+    }
+
+    await queryRunner.manager.remove(category);
+
+    // Log admin action
+    if (adminId) {
+      const adminLogRepository = queryRunner.manager.getRepository(AdminLog);
+      const log = adminLogRepository.create({
+        admin: { id: adminId },
+        action: "delete",
+        entity_type: "category",
+        entity_id: id,
+      });
+      await queryRunner.manager.save(log);
+    }
+
+    await queryRunner.commitTransaction();
+
+    return {
+      message: "Category deleted successfully",
+    };
+  } catch (error) {
+    await queryRunner.rollbackTransaction();
+    if (error instanceof UploadError) {
+      throw error;
+    }
+    throw new Error("Failed to delete category");
+  } finally {
+    await queryRunner.release();
   }
 };

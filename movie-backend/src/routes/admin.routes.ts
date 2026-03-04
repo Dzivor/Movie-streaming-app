@@ -1,8 +1,21 @@
 import { Router } from "express";
 import multer from "multer";
-import { upload, getLogs } from "../controllers/admin.controller";
+import {
+  upload,
+  getLogs,
+  addCategory,
+  getCategories,
+  getCategory,
+  editCategory,
+  removeCategory,
+} from "../controllers/admin.controller";
 import { authenticateToken } from "../middlewares/auth.middleware";
 import { requireRole } from "../middlewares/role.middleware";
+import { validate } from "../middlewares/validation.middleware";
+import {
+  createCategorySchema,
+  CreateCategoryDTO,
+} from "../validation/category.validation";
 
 const router = Router();
 
@@ -60,5 +73,19 @@ router.post(
 );
 
 router.get("/logs", getLogs);
+
+router.post(
+  "/categories",
+  validate<CreateCategoryDTO>(createCategorySchema),
+  addCategory,
+);
+router.get("/categories", getCategories);
+router.get("/categories/:id", getCategory);
+router.put(
+  "/categories/:id",
+  validate<CreateCategoryDTO>(createCategorySchema),
+  editCategory,
+);
+router.delete("/categories/:id", removeCategory);
 
 export default router;
