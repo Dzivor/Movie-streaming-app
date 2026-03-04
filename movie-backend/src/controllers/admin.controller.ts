@@ -1,7 +1,11 @@
 import { Request, Response } from "express";
 import { uploadMovie, getAdminLogs } from "../services/admin.service";
+import { uploadToR2, deleteFromR2 } from "../services/r2.service";
 
 export const upload = async (req: Request, res: Response) => {
+  let uploadedThumbnailKey: string | null = null;
+  let uploadedVideoKey: string | null = null;
+
   try {
     if (!req.user) {
       return res.status(401).json({
@@ -20,7 +24,9 @@ export const upload = async (req: Request, res: Response) => {
     const thumbnailFiles = req.files.thumbnail;
     const videoFiles = req.files.video;
 
-    const thumbnailFile = Array.isArray(thumbnailFiles) ? thumbnailFiles[0] : thumbnailFiles;
+    const thumbnailFile = Array.isArray(thumbnailFiles)
+      ? thumbnailFiles[0]
+      : thumbnailFiles;
     const videoFile = Array.isArray(videoFiles) ? videoFiles[0] : videoFiles;
 
     if (!thumbnailFile || !videoFile) {
@@ -49,22 +55,31 @@ export const upload = async (req: Request, res: Response) => {
       });
     }
 
+    // Upload thumbnail to R2
+    const thumbnailResult = await uploadToR2(thumbnailFile, "thumbnail");
+    uploadedThumbnailKey = thumbnailResult.key;
+
+    // Upload video to R2
+    const videoResult = await uploadToR2(videoFile, "video");
+    uploadedVideoKey = videoResult.key;
+
     const uploadData = {
       title,
       description,
       category_id,
-      duration_seconds: parseInt(duration_seconds),
-      release_year: parseInt(release_year),
+      duration_seconds: parseInt(duration_seconds, 10),
+      release_year: parseInt(release_year, 10),
       age_rating,
       preview_time_limit: preview_time_limit
-        ? parseInt(preview_time_limit)
+        ? parseInt(preview_time_limit, 10)
         : undefined,
     };
 
+    // Save movie metadata to database with R2 keys
     const result = await uploadMovie(
       uploadData,
-      thumbnailFile.path,
-      videoFile.path,
+      thumbnailResult.key,
+      videoResult.key,
       req.user.userId,
     );
 
@@ -74,6 +89,18 @@ export const upload = async (req: Request, res: Response) => {
       data: result,
     });
   } catch (error) {
+    // Cleanup: Delete uploaded files from R2 if database operation fails
+    if (uploadedThumbnailKey) {
+      await deleteFromR2(uploadedThumbnailKey).catch((err) =>
+        console.error("Failed to cleanup thumbnail:", err),
+      );
+    }
+    if (uploadedVideoKey) {
+      await deleteFromR2(uploadedVideoKey).catch((err) =>
+        console.error("Failed to cleanup video:", err),
+      );
+    }
+
     const message =
       error instanceof Error ? error.message : "Failed to upload movie";
     const statusCode = (error as any).statusCode || 500;

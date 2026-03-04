@@ -1,9 +1,8 @@
 import { Router } from "express";
-import multer, { StorageEngine } from "multer";
+import multer from "multer";
 import { upload, getLogs } from "../controllers/admin.controller";
 import { authenticateToken } from "../middlewares/auth.middleware";
 import { requireRole } from "../middlewares/role.middleware";
-import { uploadThumbnail, uploadVideo } from "../config/multer";
 
 const router = Router();
 
@@ -11,27 +10,44 @@ const router = Router();
 router.use(authenticateToken);
 router.use(requireRole("admin"));
 
-// Combine both upload instances for handling multiple file types
-const storage: StorageEngine = multer.diskStorage({
-  destination: (req: any, file: any, cb: any) => {
-    if (file.fieldname === "thumbnail") {
-      cb(null, "uploads/thumbnails");
-    } else if (file.fieldname === "video") {
-      cb(null, "uploads/videos");
-    }
-  },
-  filename: (req: any, file: any, cb: any) => {
-    const uniqueName = `${Date.now()}-${Math.random().toString(36).substr(2, 9)}.${file.mimetype.split("/")[1]}`;
-    cb(null, uniqueName);
-  },
-});
+// File filter for validating file types
+const fileFilter = (req: any, file: any, cb: any) => {
+  const allowedImageMimes = ["image/jpeg", "image/png", "image/gif"];
+  const allowedVideoMimes = [
+    "video/mp4",
+    "video/x-matroska",
+    "video/quicktime",
+  ];
 
+  if (file.fieldname === "thumbnail") {
+    if (allowedImageMimes.includes(file.mimetype)) {
+      cb(null, true);
+    } else {
+      cb(
+        new Error(
+          "Only image files (jpeg, png, gif) are allowed for thumbnails",
+        ),
+      );
+    }
+  } else if (file.fieldname === "video") {
+    if (allowedVideoMimes.includes(file.mimetype)) {
+      cb(null, true);
+    } else {
+      cb(new Error("Only video files (mp4, mkv, mov) are allowed"));
+    }
+  } else {
+    cb(new Error("Unexpected field"));
+  }
+};
+
+// Configure multer with memory storage for R2 upload
 const upload_handler = multer({
-  storage,
+  storage: multer.memoryStorage(),
   limits: {
     fieldSize: 10 * 1024 * 1024,
-    fileSize: 2 * 1024 * 1024 * 1024,
+    fileSize: 2 * 1024 * 1024 * 1024, // 2GB max
   },
+  fileFilter,
 });
 
 router.post(
