@@ -5,6 +5,8 @@ import helmet from "helmet";
 import authRouter from "./routes/auth.routes";
 import moviesRouter from "./routes/movies.routes";
 import adminRouter from "./routes/admin.routes";
+import usersRouter from "./routes/users.routes";
+import categoryRouter from "./routes/category.routes";
 import watchSessionsRouter from "./routes/watch-sessions.routes";
 import streamRouter from "./routes/stream.routes";
 import { errorHandler, notFoundHandler } from "./middlewares/error.middleware";
@@ -29,7 +31,9 @@ app.get("/health", (req, res) => {
 
 app.use("/auth", authRouter);
 app.use("/movies", moviesRouter);
+app.use("/categories", categoryRouter);
 app.use("/admin", adminRouter);
+app.use("/admin/users", usersRouter);
 app.use("/watch-sessions", watchSessionsRouter);
 app.use("/stream", streamRouter);
 
