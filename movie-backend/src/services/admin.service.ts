@@ -356,3 +356,36 @@ export const deleteCategory = async (id: string, adminId?: string) => {
     await queryRunner.release();
   }
 };
+
+export const getAdminStats = async () => {
+  try {
+    const userRepository = AppDataSource.getRepository(User);
+    const movieRepository = AppDataSource.getRepository(Movie);
+    const categoryRepository = AppDataSource.getRepository(Category);
+
+    // Count total users
+    const totalUsers = await userRepository.count();
+
+    // Count active users
+    const activeUsers = await userRepository.count({
+      where: { is_active: true },
+    });
+
+    // Count total movies
+    const totalMovies = await movieRepository.count();
+
+    // Count total categories
+    const totalCategories = await categoryRepository.count();
+
+    return {
+      totalUsers,
+      activeUsers,
+      inactiveUsers: totalUsers - activeUsers,
+      totalMovies,
+      totalCategories,
+      timestamp: new Date(),
+    };
+  } catch (error) {
+    throw new Error("Failed to fetch admin statistics");
+  }
+};

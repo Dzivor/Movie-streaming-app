@@ -8,6 +8,7 @@ import {
   getCategoryById,
   updateCategory,
   deleteCategory,
+  getAdminStats,
 } from "../services/admin.service";
 import { uploadToR2, deleteFromR2 } from "../services/r2.service";
 
@@ -322,6 +323,30 @@ export const removeCategory = async (
       status: "error",
       message:
         error instanceof Error ? error.message : "Failed to delete category",
+    });
+  }
+};
+
+export const getStats = async (req: Request, res: Response) => {
+  try {
+    if (!req.user) {
+      return res.status(401).json({
+        status: "error",
+        message: "Unauthorized",
+      });
+    }
+
+    const stats = await getAdminStats();
+
+    return res.status(200).json({
+      status: "success",
+      data: stats,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      status: "error",
+      message:
+        error instanceof Error ? error.message : "Failed to fetch statistics",
     });
   }
 };

@@ -166,3 +166,46 @@ export const updateUserRole = async (
 };
 
 export { UserNotFoundError, UserManagementError };
+
+export const deactivateUser = async (userId: string, adminId: string) => {
+  const queryRunner = AppDataSource.createQueryRunner();
+  await queryRunner.connect();
+  await queryRunner.startTransaction();
+
+  try {
+    const userRepository = queryRunner.manager.getRepository(User);
+
+    const user = await userRepository.findOne({ where: { id: userId } });
+
+    if (!user) {
+      throw new UserNotFoundError();
+    }
+
+    user.is_active = false;
+    await queryRunner.manager.save(user);
+
+    // Log admin action
+    const adminLogRepository = queryRunner.manager.getRepository(AdminLog);
+    const log = adminLogRepository.create({
+      admin: { id: adminId },
+      action: "deactivate_user",
+      entity_type: "user",
+      entity_id: userId,
+    });
+    await queryRunner.manager.save(log);
+
+    await queryRunner.commitTransaction();
+
+    return {
+      message: "User deactivated successfully",
+    };
+  } catch (error) {
+    await queryRunner.rollbackTransaction();
+    if (error instanceof UserNotFoundError) {
+      throw error;
+    }
+    throw new Error("Failed to deactivate user");
+  } finally {
+    await queryRunner.release();
+  }
+};

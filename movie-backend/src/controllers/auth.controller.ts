@@ -74,6 +74,7 @@ export const getCurrentUser = async (req: Request, res: Response) => {
     const userRepository = AppDataSource.getRepository(User);
     const user = await userRepository.findOne({
       where: { id: req.user.userId },
+      relations: ["role"],
     });
 
     if (!user) {
@@ -83,12 +84,7 @@ export const getCurrentUser = async (req: Request, res: Response) => {
     }
 
     return res.status(200).json({
-      user: {
-        id: user.id,
-        email: user.email,
-        firstName: user.first_name,
-        lastName: user.last_name,
-      },
+      user: toPublicUser(user),
     });
   } catch (error) {
     const authError = toAuthError(error);

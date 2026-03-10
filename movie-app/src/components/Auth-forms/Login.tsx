@@ -3,7 +3,6 @@ import { Eye, EyeClosed } from "lucide-react";
 import { ErrorMessage, Field, Form, Formik } from "formik";
 import { useNavigate } from "react-router-dom";
 import { signInSchema } from "../../validation/signInValidation";
-import { useAuth } from "../../hooks/useAuth";
 
 interface LoginProps {
   onClose?: () => void;
@@ -11,28 +10,18 @@ interface LoginProps {
 
 export function Login({ onClose }: LoginProps = {}) {
   const [showPassword, setShowPassword] = useState(false);
-  const { login, isLoading, error } = useAuth();
   const navigate = useNavigate();
 
-  const handleSubmit = async (values: { email: string; password: string }) => {
-    try {
-      await login(values.email, values.password);
-      onClose?.(); // Close modal if callback provided
-      navigate("/Movies");
-    } catch {
-      // Error is handled by context
-    }
+  const handleSubmit = (values: { email: string; password: string }) => {
+    // Form validation only - backend integration to be implemented
+    console.log("Login attempt:", values);
+    onClose?.(); // Close modal if callback provided
+    navigate("/Movies");
   };
 
   return (
     <div>
       <h2 className="text-2xl font-bold text-gray-800 mb-6">Sign In</h2>
-
-      {error && (
-        <div className="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded">
-          {error}
-        </div>
-      )}
 
       <Formik
         initialValues={{ email: "", password: "" }}
@@ -94,10 +83,9 @@ export function Login({ onClose }: LoginProps = {}) {
 
           <button
             type="submit"
-            disabled={isLoading}
-            className="w-full bg-red-600 hover:bg-red-700 disabled:bg-gray-400 text-white font-semibold py-2.5 rounded-lg transition-colors disabled:cursor-not-allowed"
+            className="w-full bg-red-600 hover:bg-red-700 text-white font-semibold py-2.5 rounded-lg transition-colors"
           >
-            {isLoading ? "Logging in..." : "Login"}
+            Login
           </button>
         </Form>
       </Formik>

@@ -3,42 +3,26 @@ import { Eye, EyeClosed } from "lucide-react";
 import { ErrorMessage, Field, Form, Formik } from "formik";
 import { useNavigate } from "react-router-dom";
 import { signUpSchema } from "../../validation/signUpValidation";
-import { apiClient } from "../../backend/apiClient";
 
 const SignUpPage = () => {
   const [showPassword, setShowPassword] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
 
   const handleSignInRedirect = () => {
     navigate("/?showLogin=true");
   };
 
-  const handleSubmit = async (values: {
+  const handleSubmit = (values: {
     firstName: string;
     lastName: string;
     email: string;
     password: string;
     confirmPassword: string;
   }) => {
-    try {
-      setError(null);
-      setIsLoading(true);
-      await apiClient.registerOnly({
-        firstName: values.firstName,
-        lastName: values.lastName,
-        email: values.email,
-        password: values.password,
-      });
-      // Redirect to homepage with login modal trigger
-      navigate("/?showLogin=true");
-    } catch (err) {
-      const message = err instanceof Error ? err.message : "Registration failed";
-      setError(message);
-    } finally {
-      setIsLoading(false);
-    }
+    // Form validation only - backend integration to be implemented
+    console.log("Sign-up attempt:", values);
+    // Redirect to homepage with login modal trigger
+    navigate("/?showLogin=true");
   };
 
   return (
@@ -48,12 +32,6 @@ const SignUpPage = () => {
         <p className="mt-2 text-gray-400">
           Join StreamVibe and start your movie journey.
         </p>
-
-        {error && (
-          <div className="mt-4 p-3 bg-red-900/20 border border-red-500 text-red-400 rounded">
-            {error}
-          </div>
-        )}
 
         <Formik
           initialValues={{
@@ -199,10 +177,9 @@ const SignUpPage = () => {
 
             <button
               type="submit"
-              disabled={isLoading}
-              className="w-full bg-red-600 hover:bg-red-700 disabled:bg-gray-600 text-white font-semibold py-2.5 rounded-lg transition-colors disabled:cursor-not-allowed"
+              className="w-full bg-red-600 hover:bg-red-700 text-white font-semibold py-2.5 rounded-lg transition-colors"
             >
-              {isLoading ? "Creating Account..." : "Create Account"}
+              Create Account
             </button>
 
             <p className="text-center text-sm text-gray-400">

@@ -8,6 +8,7 @@ import {
   getCategory,
   editCategory,
   removeCategory,
+  getStats,
 } from "../controllers/admin.controller";
 import { authenticateToken } from "../middlewares/auth.middleware";
 import { requireRole } from "../middlewares/role.middleware";
@@ -73,6 +74,8 @@ router.post(
 );
 
 router.get("/logs", getLogs);
+
+router.get("/stats", getStats);
 
 router.post(
   "/categories",

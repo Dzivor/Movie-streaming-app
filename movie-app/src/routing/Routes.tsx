@@ -8,6 +8,7 @@ import PlayMoviePage from "../pages/PlayMoviePage/PlayMoviePage";
 import AdminDashboard from "../pages/AdminDashboard";
 import { ErrorBoundary, RouteErrorFallback } from "../components/ErrorBoundary";
 import MainLayout from "../layout/MainLayout";
+import { ProtectedRoute } from "./ProtectedRoute";
 
 const AppRoutes = () => {
   return (
@@ -25,7 +26,9 @@ const AppRoutes = () => {
           path="/admin/*"
           element={
             <ErrorBoundary fallback={<RouteErrorFallback />}>
-              <AdminDashboard />
+              <ProtectedRoute requiredRole="admin">
+                <AdminDashboard />
+              </ProtectedRoute>
             </ErrorBoundary>
           }
         />
