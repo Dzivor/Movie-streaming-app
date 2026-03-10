@@ -1,16 +1,19 @@
 import { useState } from "react";
 import { Eye, EyeClosed } from "lucide-react";
 import { ErrorMessage, Field, Form, Formik } from "formik";
-import { useNavigate } from "react-router-dom";
 import { signUpSchema } from "../../validation/signUpValidation";
+import { useRegister } from "../../hooks/Mutations/useRegister";
+import { useNavigate } from "react-router";
 
 const SignUpPage = () => {
   const [showPassword, setShowPassword] = useState(false);
+
   const navigate = useNavigate();
 
   const handleSignInRedirect = () => {
     navigate("/?showLogin=true");
   };
+  const { mutate, isPending, isError } = useRegister();
 
   const handleSubmit = (values: {
     firstName: string;
@@ -19,10 +22,12 @@ const SignUpPage = () => {
     password: string;
     confirmPassword: string;
   }) => {
-    // Form validation only - backend integration to be implemented
-    console.log("Sign-up attempt:", values);
-    // Redirect to homepage with login modal trigger
-    navigate("/?showLogin=true");
+    mutate({
+      firstName: values.firstName,
+      lastName: values.lastName,
+      email: values.email,
+      password: values.password,
+    });
   };
 
   return (
@@ -171,15 +176,22 @@ const SignUpPage = () => {
               <ErrorMessage
                 name="confirmPassword"
                 component="p"
-                className="text-sm text-red-400 mt-1"
+                className="text-red-400 text-sm text-center"
               />
             </div>
+
+            {isError && (
+              <p className="text-red-400 text-sm text-center">
+                Registration failed. Please try again.
+              </p>
+            )}
 
             <button
               type="submit"
               className="w-full bg-red-600 hover:bg-red-700 text-white font-semibold py-2.5 rounded-lg transition-colors"
+              disabled={isPending}
             >
-              Create Account
+              {isPending ? "Creating Account..." : "Create Account"}
             </button>
 
             <p className="text-center text-sm text-gray-400">
