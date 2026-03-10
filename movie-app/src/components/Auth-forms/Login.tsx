@@ -1,8 +1,9 @@
 import { useState } from "react";
 import { Eye, EyeClosed } from "lucide-react";
 import { ErrorMessage, Field, Form, Formik } from "formik";
-import { useNavigate } from "react-router-dom";
+
 import { signInSchema } from "../../validation/signInValidation";
+import { useLogin } from "../../hooks/Mutations/useLogin";
 
 interface LoginProps {
   onClose?: () => void;
@@ -10,13 +11,13 @@ interface LoginProps {
 
 export function Login({ onClose }: LoginProps = {}) {
   const [showPassword, setShowPassword] = useState(false);
-  const navigate = useNavigate();
+
+  const { mutate, isPending, isError } = useLogin();
 
   const handleSubmit = (values: { email: string; password: string }) => {
-    // Form validation only - backend integration to be implemented
-    console.log("Login attempt:", values);
-    onClose?.(); // Close modal if callback provided
-    navigate("/Movies");
+    mutate(values, {
+      onSuccess: () => onClose?.(),
+    });
   };
 
   return (
@@ -80,12 +81,18 @@ export function Login({ onClose }: LoginProps = {}) {
               className="text-sm text-red-600 mt-1"
             />
           </div>
+          {isError && (
+            <p className="text-red-600 text-sm text-center">
+              Login failed. Please check your credentials and try again.
+            </p>
+          )}
 
           <button
             type="submit"
             className="w-full bg-red-600 hover:bg-red-700 text-white font-semibold py-2.5 rounded-lg transition-colors"
+            disabled={isPending}
           >
-            Login
+            {isPending ? "Signing in..." : "Sign In"}
           </button>
         </Form>
       </Formik>
