@@ -2,27 +2,31 @@ import { useState, useEffect } from "react";
 import { Search, LogOut } from "lucide-react";
 import { NavLink, useSearchParams, useNavigate } from "react-router-dom";
 import { SignInDialog } from "../Auth-forms/SignInDialog";
-import { useAuth } from "../../hooks/useAuth";
+import { useAuth } from "../../hooks/Queries/useAuth";
+import apiClient from "../../backend/apiClient";
+import { useQueryClient } from "@tanstack/react-query";
 
 const Navbar = () => {
-  const [isSignInOpen, setIsSignInOpen] = useState(false);
-  const [isLogoutConfirmOpen, setIsLogoutConfirmOpen] = useState(false);
   const [searchParams, setSearchParams] = useSearchParams();
-  const { isAuthenticated, logout } = useAuth();
+  const shouldShowLogin = searchParams.get("showLogin") === "true";
+  const [isSignInOpen, setIsSignInOpen] = useState(shouldShowLogin);
+  const [isLogoutConfirmOpen, setIsLogoutConfirmOpen] = useState(false);
+  const { data } = useAuth();
   const navigate = useNavigate();
 
-  // Check if we should open the login modal from URL params
+  // Clean up the showLogin param from URL after reading it
   useEffect(() => {
-    if (searchParams.get("showLogin") === "true") {
-      setIsSignInOpen(true);
-      // Remove the param from URL
+    if (shouldShowLogin) {
       searchParams.delete("showLogin");
       setSearchParams(searchParams, { replace: true });
     }
-  }, [searchParams, setSearchParams]);
+  }, [shouldShowLogin, searchParams, setSearchParams]);
 
+  const queryClient = useQueryClient();
+  const isAuthenticated = !!data?.user;
   const handleLogout = () => {
-    logout();
+    apiClient.logout(); // clears tokens
+    queryClient.clear(); //clear cached data
     setIsLogoutConfirmOpen(false);
     navigate("/");
   };
@@ -158,9 +162,12 @@ const Navbar = () => {
           />
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
             <div className="bg-white rounded-2xl shadow-2xl max-w-sm w-full p-8 relative">
-              <h3 className="text-xl font-bold text-gray-800 mb-4">Confirm Logout</h3>
+              <h3 className="text-xl font-bold text-gray-800 mb-4">
+                Confirm Logout
+              </h3>
               <p className="text-gray-600 mb-6">
-                Are you sure you want to logout? You'll need to sign in again to access your account.
+                Are you sure you want to logout? You'll need to sign in again to
+                access your account.
               </p>
               <div className="flex gap-3 justify-end">
                 <button

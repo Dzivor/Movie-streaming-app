@@ -12,12 +12,14 @@ export function useRegister() {
       email: string;
       password: string;
     }) => apiClient.register(credentials),
-    onSuccess: () => {
+    onSuccess: (data) => {
+        console.log("Registration successful:", data);
       navigate("/?showLogin=true");
     },
 
     onError: (error: Error) => {
       console.error("Registration failed:", error.message);
     },
+    
   });
 }

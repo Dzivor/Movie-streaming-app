@@ -1,9 +1,9 @@
-import type { Movie } from "../../types/movie.types";
+import type { MovieDetail } from "../../backend/apiClient";
 import MovieCard from "./MovieCard";
 
 interface MovieSectionProps {
   title: string;
-  movies: Movie[];
+  movies: MovieDetail[];
 }
 
 const MovieSection: React.FC<MovieSectionProps> = ({ title, movies }) => {

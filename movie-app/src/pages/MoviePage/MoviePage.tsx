@@ -1,79 +1,72 @@
 import Footer from "../../components/layout/Footer";
 import MovieHeroSection from "../../components/hero/MovieHeroSection";
 import MovieSection from "../../components/movies/MovieSection";
-import {
-  trendingMovies,
-  actionMovies,
-  sciFiMovies,
-  dramaMovies,
-  comedyMovies,
-  newReleases,
-} from "../../Data/movie";
-import { validateMovieArray } from "../../utils/dataValidation";
-import { useMemo } from "react";
+import { useCategories } from "../../hooks/Queries/useCategories";
+import { useTrendingMovies } from "../../hooks/Queries/useTrendingMovies";
+import { useMoviesByCategory } from "../../hooks/Queries/useMoviesByCategory";
 
 const MoviePage = () => {
-  // Validate all movie data using guards
-  const validatedTrendingMovies = useMemo(
-    () => validateMovieArray(trendingMovies),
-    [],
-  );
-  const validatedActionMovies = useMemo(
-    () => validateMovieArray(actionMovies),
-    [],
-  );
-  const validatedSciFiMovies = useMemo(
-    () => validateMovieArray(sciFiMovies),
-    [],
-  );
-  const validatedDramaMovies = useMemo(
-    () => validateMovieArray(dramaMovies),
-    [],
-  );
-  const validatedComedyMovies = useMemo(
-    () => validateMovieArray(comedyMovies),
-    [],
-  );
-  const validatedNewReleases = useMemo(
-    () => validateMovieArray(newReleases),
-    [],
-  );
+  //Fetching trending movies and categories
+  const { data: trendingMovies, isLoading: trendingLoading } =
+    useTrendingMovies(10);
 
+  const { data: categories, isLoading: categoriesLoading } = useCategories();
+
+  //Finding the id's of the categories we want to display
+  const actionId = categories?.data.find(
+    (c) => c.name === "Action" || c.name === "ACTION",
+  )?.id;
+  const sciFiId = categories?.data.find(
+    (c) => c.name === "Sci-Fi" || c.name === "SCIENCE FICTION",
+  )?.id;
+  const dramaId = categories?.data.find(
+    (c) => c.name === "Drama" || c.name === "DRAMA",
+  )?.id;
+  const comedyId = categories?.data.find(
+    (c) => c.name === "Comedy" || c.name === "COMEDY",
+  )?.id;
+
+  //Fetching movies for each category
+  const { data: actionMovies } = useMoviesByCategory(actionId!);
+  const { data: sciFiMovies } = useMoviesByCategory(sciFiId!);
+  const { data: dramaMovies } = useMoviesByCategory(dramaId!);
+  const { data: comedyMovies } = useMoviesByCategory(comedyId!);
+
+  if (trendingLoading || categoriesLoading) {
+    return (
+      <div className="bg-black text-white min-h-screen flex items-center justify-center">
+        <p>Loading...</p>
+      </div>
+    );
+  }
   return (
     <div className="bg-black text-white min-h-screen">
       <MovieHeroSection />
 
       {/*Trending Movies*/}
-      {validatedTrendingMovies.length > 0 && (
-        <MovieSection title="Trending Now" movies={validatedTrendingMovies} />
-      )}
 
-      {/* New Releases */}
-      {validatedNewReleases.length > 0 && (
-        <MovieSection title="New Releases" movies={validatedNewReleases} />
-      )}
+      <MovieSection title="Trending Now" movies={trendingMovies?.data ?? []} />
 
-      {/* Action Movies */}
-      {validatedActionMovies.length > 0 && (
+      {actionMovies?.data && actionMovies.data.length > 0 && (
         <MovieSection
           title="Popular Action Movies"
-          movies={validatedActionMovies}
+          movies={actionMovies.data}
         />
       )}
 
       {/* Sci-Fi Movies */}
-      {validatedSciFiMovies.length > 0 && (
-        <MovieSection title="Sci-Fi Adventures" movies={validatedSciFiMovies} />
+      {sciFiMovies?.data && sciFiMovies.data.length > 0 && (
+        <MovieSection title="Sci-Fi Adventures" movies={sciFiMovies.data} />
       )}
 
       {/* Drama Movies */}
-      {validatedDramaMovies.length > 0 && (
-        <MovieSection title="Must-Watch Dramas" movies={validatedDramaMovies} />
+      {dramaMovies?.data && dramaMovies.data.length > 0 && (
+        <MovieSection title="Must-Watch Dramas" movies={dramaMovies.data} />
       )}
 
       {/* Comedy Movies */}
-      {validatedComedyMovies.length > 0 && (
-        <MovieSection title="Comedy Favorites" movies={validatedComedyMovies} />
+      {comedyMovies?.data && comedyMovies.data.length > 0 && (
+        <MovieSection title="Comedy Favorites" movies={comedyMovies.data} />
       )}
 
       <Footer />

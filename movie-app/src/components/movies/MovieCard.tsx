@@ -1,30 +1,17 @@
-import { useNavigate } from "react-router-dom";
-import type { Movie } from "../../types/movie.types";
-import { useAuth } from "../../hooks/useAuth";
+import type { MovieDetail } from "../../backend/apiClient"
+
 
 interface MovieCardProps {
-  movie: Movie;
+  movie: MovieDetail;
 }
 
 const MovieCard: React.FC<MovieCardProps> = ({ movie }) => {
-  const navigate = useNavigate();
-  const { isAuthenticated } = useAuth();
-
-  const handleClick = () => {
-    if (!isAuthenticated) {
-      navigate("/Sign Up");
-      return;
-    }
-    navigate(`/movie/${movie.id}`);
-  };
+  
 
   return (
-    <div
-      onClick={handleClick}
-      className="bg-gray-600 rounded-xl overflow-hidden border border-gray-600 hover:scale-105 transition-transform duration-300 cursor-pointer"
-    >
+    <div className="bg-gray-600 rounded-xl overflow-hidden border border-gray-600 hover:scale-105 transition-transform duration-300 cursor-pointer">
       <img
-        src={movie.thumbnail}
+        src={movie.thumbnail_url}
         alt={movie.title}
         className="w-full h-72  object-cover object-center"
       />
@@ -36,8 +23,8 @@ const MovieCard: React.FC<MovieCardProps> = ({ movie }) => {
         </p>
 
         <div className="flex justify-between mt-3 text-xs text-gray-400">
-          <span>{movie.durationMinutes} min</span>
-          <span>{movie.views} views</span>
+          <span>{Math.floor(movie.duration_seconds / 60)} min</span>
+          <span>{movie.release_year} release year</span>
         </div>
       </div>
       <div className="absolute bottom-0 w-full h-40 "></div>
