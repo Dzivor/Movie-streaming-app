@@ -1,15 +1,31 @@
-import type { MovieDetail } from "../../backend/apiClient"
-
+import type { MovieDetail } from "../../backend/apiClient";
+import { useNavigate } from "react-router-dom";
+import { useAuthModal } from "../../hooks/useAuthModal";
+import { useAuth } from "../../hooks/Queries/useAuth";
 
 interface MovieCardProps {
   movie: MovieDetail;
 }
 
 const MovieCard: React.FC<MovieCardProps> = ({ movie }) => {
-  
+  const navigate = useNavigate();
+  const { data } = useAuth();
+  const { openLoginModal } = useAuthModal();
+  const isAuthenticated = !!data?.user;
+
+  const handleCardClick = () => {
+    if (!isAuthenticated) {
+      openLoginModal();
+      return;
+    }
+    navigate(`/movies/${movie.id}`);
+  };
 
   return (
-    <div className="bg-gray-600 rounded-xl overflow-hidden border border-gray-600 hover:scale-105 transition-transform duration-300 cursor-pointer">
+    <div
+      onClick={handleCardClick}
+      className="relative cursor-pointer bg-gray-800 rounded-lg overflow-hidden border border-gray-700 hover:scale-105 transition-transform duration-300"
+    >
       <img
         src={movie.thumbnail_url}
         alt={movie.title}
@@ -23,7 +39,7 @@ const MovieCard: React.FC<MovieCardProps> = ({ movie }) => {
         </p>
 
         <div className="flex justify-between mt-3 text-xs text-gray-400">
-          <span>{Math.floor(movie.duration_seconds / 60)} min</span>
+          <span>{Math.floor((movie.duration_seconds ?? 0) / 60)} min</span>
           <span>{movie.release_year} release year</span>
         </div>
       </div>

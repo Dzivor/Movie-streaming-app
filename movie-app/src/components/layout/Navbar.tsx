@@ -5,11 +5,13 @@ import { SignInDialog } from "../Auth-forms/SignInDialog";
 import { useAuth } from "../../hooks/Queries/useAuth";
 import apiClient from "../../backend/apiClient";
 import { useQueryClient } from "@tanstack/react-query";
+import { useAuthModal } from "../../hooks/useAuthModal";
+
 
 const Navbar = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const shouldShowLogin = searchParams.get("showLogin") === "true";
-  const [isSignInOpen, setIsSignInOpen] = useState(shouldShowLogin);
+  const {isOpen, openLoginModal,  closeLoginModal} = useAuthModal();
   const [isLogoutConfirmOpen, setIsLogoutConfirmOpen] = useState(false);
   const { data } = useAuth();
   const navigate = useNavigate();
@@ -18,6 +20,7 @@ const Navbar = () => {
   useEffect(() => {
     if (shouldShowLogin) {
       searchParams.delete("showLogin");
+      openLoginModal();
       setSearchParams(searchParams, { replace: true });
     }
   }, [shouldShowLogin, searchParams, setSearchParams]);
@@ -101,7 +104,7 @@ const Navbar = () => {
                   to="/signin"
                   onClick={(event) => {
                     event.preventDefault();
-                    setIsSignInOpen(true);
+                    openLoginModal();
                   }}
                   className="hidden md:block text-gray-300 hover:text-white transition-colors duration-300 text-sm font-medium px-4 py-2 rounded-lg hover:bg-white/5"
                 >
@@ -143,7 +146,7 @@ const Navbar = () => {
               to="/signin"
               onClick={(event) => {
                 event.preventDefault();
-                setIsSignInOpen(true);
+                openLoginModal();
               }}
               className="px-4 py-2 rounded-full hover:bg-red-600 hover:text-white transition-all duration-300 text-xs font-medium text-gray-300"
             >
@@ -189,8 +192,8 @@ const Navbar = () => {
       )}
 
       <SignInDialog
-        isOpen={isSignInOpen}
-        onClose={() => setIsSignInOpen(false)}
+        isOpen={isOpen}
+        onClose={closeLoginModal}
       />
     </nav>
   );

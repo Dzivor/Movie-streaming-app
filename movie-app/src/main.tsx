@@ -5,6 +5,7 @@ import "./index.css";
 import App from "./App.tsx";
 import { BrowserRouter } from "react-router-dom";
 import { ErrorBoundary } from "./components/ErrorBoundary";
+import { AuthModalProvider } from "./context/AuthModalProvider.tsx";
 
 const queryClient = new QueryClient();
 
@@ -13,7 +14,9 @@ createRoot(document.getElementById("root")!).render(
     <ErrorBoundary>
       <BrowserRouter>
         <QueryClientProvider client={queryClient}>
-          <App />
+          <AuthModalProvider>
+            <App />
+          </AuthModalProvider>
         </QueryClientProvider>
       </BrowserRouter>
     </ErrorBoundary>
