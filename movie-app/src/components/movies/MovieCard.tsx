@@ -18,7 +18,7 @@ const MovieCard: React.FC<MovieCardProps> = ({ movie }) => {
       openLoginModal();
       return;
     }
-    navigate(`/movies/${movie.id}`);
+    navigate(`/movie/${movie.id}`);
   };
 
   return (
